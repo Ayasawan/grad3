@@ -46,6 +46,11 @@ Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
           Route::prefix("investors")->group(function (){
             Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroy']);
         });
+
+         //Complaint
+         Route::prefix("complaints")->group(function (){
+            Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroy']);
+        });
 });
 
 
@@ -75,7 +80,6 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::prefix("complaints")->group(function (){
             Route::get('/',[\App\Http\Controllers\ComplaintController::class,'index']);
             Route::get('/{id}',[\App\Http\Controllers\ComplaintController::class,'show']);
-            Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroy']);
         });
 
 
