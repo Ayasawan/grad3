@@ -81,9 +81,6 @@ class ProjectController extends Controller
         {
             return $this->apiResponse(null ,'the Project not found ',404);
         }
-        if($Project->user_id !=Auth::id()){
-            return $this->apiResponse(null, 'you do not have rights', 400);
-        }
         $Project->update($request->all());
         if($Project)
         {

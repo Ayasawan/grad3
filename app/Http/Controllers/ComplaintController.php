@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\ComplaintResource;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
 
 
 use Illuminate\Http\Request;
@@ -28,13 +29,18 @@ class ComplaintController extends Controller
         $validator = Validator::make( $input, [
             'description' => 'required',
             'project_id' => 'required',
-            'investor_id' => 'required',
+           
         ]);
         if ($validator->fails()) {
             return $this->apiResponse(null, $validator->errors(), 400);
         }
 
-        $Complaint =Complaint::create($request->all());
+        $Complaint = Complaint::query()->create([
+            'description' => $request->description,
+            'project_id' => $request->project_id,
+            'investor_id' => Auth::id(),  
+        ]);
+
 
         if ($Complaint) {
             return $this->apiResponse(new ComplaintResource($Complaint), 'the Complaint  save', 201);

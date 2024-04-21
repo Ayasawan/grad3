@@ -42,7 +42,6 @@ Route::prefix("complaints")->group(function (){
 
   Route::post('/',[\App\Http\Controllers\ComplaintController::class,'store']);
   Route::post('update/{id}',[\App\Http\Controllers\ComplaintController::class,'update']);
-  Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroy']);
 });
 
 
