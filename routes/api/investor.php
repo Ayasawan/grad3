@@ -37,14 +37,6 @@ Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scope
 
 
 
-//Project
-Route::prefix("projects")->group(function (){
-  Route::get('/',[\App\Http\Controllers\ProjectController::class,'index']);
-  Route::get('/{id}',[\App\Http\Controllers\ProjectController::class,'show']);
-});
-
-
-
 //Complaint
 Route::prefix("complaints")->group(function (){
 

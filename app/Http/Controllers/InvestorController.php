@@ -73,4 +73,8 @@ class InvestorController extends Controller
         $Investor->delete($id);
             return $this->apiResponse(null, 'This Investor deleted', 200);
     }
+
+
+
+    
 }

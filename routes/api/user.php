@@ -38,11 +38,11 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
 
 
 
-//Project
-Route::prefix("projects")->group(function (){
-  Route::post('/',[\App\Http\Controllers\ProjectController::class,'store']);
-  Route::post('update/{id}',[\App\Http\Controllers\ProjectController::class,'update']);
-});
+  //Project
+  Route::prefix("projects")->group(function (){
+    Route::post('/',[\App\Http\Controllers\ProjectController::class,'store']);
+    Route::post('update/{id}',[\App\Http\Controllers\ProjectController::class,'update']);
+  });
 
 
 
