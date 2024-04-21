@@ -106,18 +106,5 @@ class ProjectController extends Controller
     }
 
 
-    
-// test test 
-    public function destroy2( $id)
-    {
-        $Project =  Project::find($id);
-
-        if(!$Project){
-            return $this->apiResponse(null, 'This Project not found', 404);
-        }
-
-        $Project->delete($id);
-            return $this->apiResponse(null, 'This Project deleted', 200);
-    }
 }
 
