@@ -92,4 +92,18 @@ class TypeController extends Controller
         if($type)
             return $this->apiResponse(null ,'the type was deleted',200);
     }
+
+
+    public function destroy14(string $id)
+    {
+        
+        $type = Type::find($id);
+        if(!$type)
+        {
+            return $this->apiResponse(null ,'the type not found ',404);
+        }
+        $type->delete($id);
+        if($type)
+            return $this->apiResponse(null ,'the type was deleted',200);
+    }
 }
