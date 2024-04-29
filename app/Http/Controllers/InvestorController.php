@@ -7,6 +7,7 @@ use App\Models\Investor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\InvestorResource;
+use Illuminate\Support\Facades\Hash;
 
 
 class InvestorController extends Controller
@@ -62,7 +63,7 @@ class InvestorController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy( $id)
+    public function destroyAdmin( $id)
     {
         $Investor =  Investor::find($id);
 
@@ -72,6 +73,27 @@ class InvestorController extends Controller
 
         $Investor->delete($id);
             return $this->apiResponse(null, 'This Investor deleted', 200);
+    }
+
+
+    public function destroyInvestor(Request $request)
+    {
+        $email = $request->input('email');
+        $password = $request->input('password');
+    
+        $Investor = Investor::where('email', $email)->first();
+    
+        if (!$Investor) {
+            return $this->apiResponse(null, 'This Investor not found', 404);
+        }
+    
+        // قم بإجراء التحقق من صحة كلمة المرور
+        if (!Hash::check($password, $Investor->password)) {
+            return $this->apiResponse(null, 'Invalid password', 401);
+        }
+    
+        $Investor->delete();
+        return $this->apiResponse(null, 'This Investor deleted', 200);
     }
 
 
