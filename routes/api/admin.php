@@ -37,6 +37,7 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
         Route::get('/',[\App\Http\Controllers\ProjectController::class,'index']);
         Route::get('/{id}',[\App\Http\Controllers\ProjectController::class,'show']);
 
+<<<<<<< HEAD
     });
     Route::prefix("reports")->group(function (){
 
@@ -47,16 +48,16 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 
 Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
+=======
+>>>>>>> 9de5b0049c00710dddf20035c52fbd1751352df3
         //Investor
-          Route::prefix("investors")->group(function (){
-            Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroy']);
+        Route::prefix("investors")->group(function (){
+            Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'show']);
         });
 
-         //Complaint
-         Route::prefix("complaints")->group(function (){
-            Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroy']);
-        });
 });
+
+
 
 
 
@@ -89,8 +90,8 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::prefix("complaints")->group(function (){
             Route::get('/',[\App\Http\Controllers\ComplaintController::class,'index']);
             Route::get('/{id}',[\App\Http\Controllers\ComplaintController::class,'show']);
+            Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroyAdmin']);
         });
-
 
 
         //Tracking
@@ -110,7 +111,10 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
             Route::get('/',[\App\Http\Controllers\InvestorController::class,'index']);
             Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'show']);
+            Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
         });
+
+
 
         Route::prefix("Article")->group(function (){
             Route::post('/',[\App\Http\Controllers\ArticleController::class,'store']);
