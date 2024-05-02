@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('pdf');
             $table->date('report_date');
             $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
-            $table->foreignId('entrepreneur_id')->constrained('entrepreneurs')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
