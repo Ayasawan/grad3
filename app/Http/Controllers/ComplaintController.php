@@ -76,7 +76,7 @@ class ComplaintController extends Controller
     }
 
    
-    public function destroy( $id)
+    public function destroyAdmin( $id)
     {
         $complaint =  Complaint::find($id);
 
@@ -87,4 +87,22 @@ class ComplaintController extends Controller
         $complaint->delete($id);
             return $this->apiResponse(null, 'This complaint deleted', 200);
     }
+
+
+    public function destroyInvestor($id)
+{
+    $complaint = Complaint::find($id);
+
+    if (!$complaint) {
+        return $this->apiResponse(null, 'This Complaint not found', 404);
+    }
+
+    // قم بالتحقق مما إذا كان المستثمر المتصل هو نفسه الذي أضاف الشكوى
+    if ($complaint->investor_id !== Auth::user()->id) {
+        return $this->apiResponse(null, 'You are not authorized to delete this complaint', 403);
+    }
+
+    $complaint->delete();
+    return $this->apiResponse(null, 'This complaint deleted', 200);
+}
 }

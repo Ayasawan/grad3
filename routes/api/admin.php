@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\PassportAuthController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\TransactionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -30,28 +32,32 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
               Route::post('delete', [EvaluationController::class, 'destroy']);
     });
 
-    
+
     Route::prefix("projects")->group(function (){
         Route::get('/',[\App\Http\Controllers\ProjectController::class,'index']);
         Route::get('/{id}',[\App\Http\Controllers\ProjectController::class,'show']);
-        
-    });
 
+<<<<<<< HEAD
+    });
+    Route::prefix("reports")->group(function (){
+
+    Route::get('/{project_id}',[\App\Http\Controllers\ReportController::class,'projectReports']);
+    });
 });
 
 
 Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
+=======
+>>>>>>> 9de5b0049c00710dddf20035c52fbd1751352df3
         //Investor
-          Route::prefix("investors")->group(function (){
-            Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroy']);
+        Route::prefix("investors")->group(function (){
+            Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'show']);
         });
 
-         //Complaint
-         Route::prefix("complaints")->group(function (){
-            Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroy']);
-        });
 });
+
+
 
 
 
@@ -59,7 +65,11 @@ Route::group(['middleware' => ['auth:user-api,admin-api']], function () {
 
     Route::prefix("projects")->group(function (){
         Route::post('delete/{id}',[\App\Http\Controllers\ProjectController::class,'destroy']);
-        
+
+    });
+    Route::prefix("Transaction")->group(function (){
+        Route::get('/{projectId}', [TransactionController::class, 'indexx']);
+
     });
 });
 
@@ -80,8 +90,8 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::prefix("complaints")->group(function (){
             Route::get('/',[\App\Http\Controllers\ComplaintController::class,'index']);
             Route::get('/{id}',[\App\Http\Controllers\ComplaintController::class,'show']);
+            Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroyAdmin']);
         });
-
 
 
         //Tracking
@@ -101,19 +111,37 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
             Route::get('/',[\App\Http\Controllers\InvestorController::class,'index']);
             Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'show']);
+            Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
         });
+
+
 
         Route::prefix("Article")->group(function (){
             Route::post('/',[\App\Http\Controllers\ArticleController::class,'store']);
             Route::post('update/{id}',[\App\Http\Controllers\ArticleController::class,'update']);
             Route::post('delete/{id}',[\App\Http\Controllers\ArticleController::class,'destroy']);
         });
-      
+
+    Route::prefix("reports")->group(function (){
+        Route::get('/', [ReportController::class, 'index']);
+        Route::get('/{id}',[\App\Http\Controllers\ReportController::class,'show']);
+
+
+    });
 
         Route::prefix("Type")->group(function (){
             Route::post('/',[\App\Http\Controllers\TypeController::class,'store']);
             Route::post('update/{id}',[\App\Http\Controllers\TypeController::class,'update']);
             Route::post('delete/{id}',[\App\Http\Controllers\TypeController::class,'destroy']);
         });
-
+    Route::prefix("Transaction")->group(function (){
+        Route::get('/', [TransactionController::class, 'index']);
+        Route::get('/review-requests', [\App\Http\Controllers\TransactionController::class,'reviewRequests']);
+        Route::get('/showAccepted', [\App\Http\Controllers\TransactionController::class,'showAcceptedTransactions']);
+        Route::get('/{id}',[\App\Http\Controllers\TransactionController::class,'show']);
+        Route::post('{id}/approve', [\App\Http\Controllers\TransactionController::class,'approveTransaction']);
+       Route::post('/',[\App\Http\Controllers\TransactionController::class,'store']);
+        Route::post('update/{id}',[\App\Http\Controllers\TransactionController::class,'update']);
+        Route::post('delete/{id}',[\App\Http\Controllers\TransactionController::class,'destroy']);
+    });
     });
