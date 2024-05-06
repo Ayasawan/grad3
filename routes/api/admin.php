@@ -41,7 +41,6 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     });
     
     Route::prefix("reports")->group(function (){
-
     Route::get('/{project_id}',[\App\Http\Controllers\ReportController::class,'projectReports']);
     });
 });
