@@ -46,15 +46,7 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 });
 
 
-Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
 
-
-        //Investor
-        Route::prefix("investors")->group(function (){
-            Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
-        });
-
-});
 
 
 

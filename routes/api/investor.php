@@ -26,6 +26,17 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 
+Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
+
+
+  //Investor
+  Route::prefix("investors")->group(function (){
+      Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
+  });
+
+});
+
+
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
 
@@ -52,6 +63,7 @@ Route::prefix("investors")->group(function (){
     Route::post('update/{id}',[\App\Http\Controllers\InvestorController::class,'update']);
     Route::post('delete',[\App\Http\Controllers\InvestorController::class,'destroyInvestor']);
     Route::get('show',[\App\Http\Controllers\InvestorController::class,'showMyProfile']);
+    
 });
 
 
