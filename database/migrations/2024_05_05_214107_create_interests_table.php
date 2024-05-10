@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
+
         Schema::create('interests', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -26,4 +26,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('interests');
     }
+
 };

@@ -13,10 +13,10 @@ class Investor extends Authenticatable
 
     use HasFactory, Notifiable, HasApiTokens;
 
-    
+
     protected $table = "investors";
 
-    protected $fillable = ['first_name','last_name','user_type','email','password','phone','location','iD_card','personal_photo',];
+    protected $fillable = ['first_name','last_name','user_type','email','password','phone','location','iD_card','personal_photo'];
 
     protected $primaryKey = "id";
     public $timestamps = true ;
@@ -30,8 +30,13 @@ class Investor extends Authenticatable
 
     }
 
+    public function interests()
+    {
+        return $this->belongsToMany(Interest::class, 'investor_interest', 'investor_id', 'interest_id');
+    }
     public function evaluations()
     {
         return $this->morphMany(Evaluation::class, 'evaluable');
     }
+
 }

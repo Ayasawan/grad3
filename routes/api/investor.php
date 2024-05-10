@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\PassportAuthController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -25,7 +26,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-
+Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
 
