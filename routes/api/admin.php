@@ -13,6 +13,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
+
 Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], function () {
 
     Route::prefix("Article")->group(function (){
@@ -47,9 +48,14 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 
 
 
-
-
-
+Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
+  
+    //Investor
+    Route::prefix("investors")->group(function (){
+        Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
+    });
+  
+  });
 
 
 Route::group(['middleware' => ['auth:user-api,admin-api']], function () {
@@ -101,7 +107,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
           Route::prefix("investors")->group(function (){
 
             Route::get('/',[\App\Http\Controllers\InvestorController::class,'index']);
-            Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'show']);
+            Route::get('showForAdmin/{id}',[\App\Http\Controllers\InvestorController::class,'showForAdmin']);
             Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
         });
 

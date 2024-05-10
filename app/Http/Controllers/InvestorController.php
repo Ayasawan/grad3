@@ -73,6 +73,19 @@ class InvestorController extends Controller
 
 
 
+public function showForAdmin($id)
+{
+    $investor = Investor::find($id);
+    
+    if ($investor) {
+        return $this->apiResponse(new InvestorResource($investor), 'ok', 200);
+    }
+    
+    return $this->apiResponse(null, 'The investor was not found', 404);
+}
+
+
+
     /**
      * Update the specified resource in storage.
      */
