@@ -32,15 +32,60 @@ class InvestorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($id)
+    public function showMyProfile()
+    
     {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json ("User not authenticated", 401);
+        }
+        // $Investor= Investor::find($id);
+        $id =$user->id;
+
         $Investor= Investor::find($id);
+
         if($Investor){
             return $this->apiResponse(new InvestorResource($Investor) , 'ok' ,200);
         }
         return $this->apiResponse(null ,'the Investor not found' ,404);
 
     }
+
+
+
+    public function showProfileByAnother($id)
+{
+    $investor = Investor::find($id);
+    
+    if ($investor) {
+        $data = [
+            'first_name' => $investor->first_name,
+            'last_name' => $investor->last_name,
+            'user_type' => $investor->user_type,
+            'location' => $investor->location,
+        ];
+        
+        return $this->apiResponse($data, 'ok', 200);
+    }
+    
+    return $this->apiResponse(null, 'The investor was not found', 404);
+}
+
+
+
+public function showForAdmin($id)
+{
+    $investor = Investor::find($id);
+    
+    if ($investor) {
+        return $this->apiResponse(new InvestorResource($investor), 'ok', 200);
+    }
+    
+    return $this->apiResponse(null, 'The investor was not found', 404);
+}
+
+
 
     /**
      * Update the specified resource in storage.
@@ -60,6 +105,10 @@ class InvestorController extends Controller
 
         }
     }
+
+
+
+    
 
     /**
      * Remove the specified resource from storage.
