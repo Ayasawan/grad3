@@ -19,6 +19,7 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     Route::prefix("Article")->group(function (){
         Route::get('/',[\App\Http\Controllers\ArticleController::class,'index']);
         Route::get('/{id}',[\App\Http\Controllers\ArticleController::class,'show']);
+
     });
 
     Route::prefix("Type")->group(function (){
@@ -42,6 +43,8 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     Route::prefix("projects")->group(function (){
         Route::get('/',[\App\Http\Controllers\ProjectController::class,'index']);
         Route::get('/{id}',[\App\Http\Controllers\ProjectController::class,'show']);
+        Route::get('Name/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByName']);
+        Route::get('Amount/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByAmount']);
 
 <<<<<<< HEAD
 
@@ -171,4 +174,15 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::post('update/{id}',[\App\Http\Controllers\TransactionController::class,'update']);
         Route::post('delete/{id}',[\App\Http\Controllers\TransactionController::class,'destroy']);
     });
+
+
+
+        //Communication 
+    Route::prefix("communications")->group(function (){
+        Route::get('/{id}', [\App\Http\Controllers\CommunicationController::class, 'show']);
+        Route::get('acceptRequest/{id}', [\App\Http\Controllers\CommunicationController::class, 'acceptRequest']);
+    });
+
+
+
     });

@@ -25,8 +25,15 @@ class ProjectController extends Controller
 
     public function store(Request $request)
     {
+<<<<<<< Updated upstream
         $input = $request->all();
         $validator = Validator::make($input, [
+=======
+        
+        $input=$request->all();
+        $validator = Validator::make( $input, [
+            'name' => 'required',
+>>>>>>> Stashed changes
             'description' => 'required',
             'feasibility_study' => 'required',
             'amount' => 'required',
@@ -46,7 +53,13 @@ class ProjectController extends Controller
             $file->move(public_path('feasibility_study/Project'), $fileName);
         }
 
+<<<<<<< Updated upstream
         $projectData = [
+=======
+        
+        $Project = Project::query()->create([
+            'name' => $request->name,
+>>>>>>> Stashed changes
             'description' => $request->description,
             'feasibility_study' => $fileName,
             'amount' => $request->amount,
@@ -150,6 +163,28 @@ class ProjectController extends Controller
         $Project->delete($id);
             return $this->apiResponse(null, 'This Project deleted', 200);
     }
+
+
+    public function searchByName($name)
+    {
+        $projects = Project::where(function ($query) use ($name) {
+            $query->where("name", "LIKE", "%" . $name . "%")
+                ->orWhereRaw("SOUNDEX(name) = SOUNDEX('" . $name . "')");
+        })->get();
+        
+        if ($projects) {
+            return $this->apiResponse($projects, 'ok', 200);
+        }
+    }
+
+    public function searchByAmount($amount)
+    {
+        $projects = Project::where("amount", "<=", $amount)->get();
+        if ($projects) {
+            return $this->apiResponse($projects, 'ok', 200);
+        }
+    }
+
 
 
 }

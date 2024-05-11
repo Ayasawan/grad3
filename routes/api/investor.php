@@ -3,6 +3,8 @@
 
 use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\PassportAuthController;
+use App\Http\Controllers\CommunicationController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -29,16 +31,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 <<<<<<< HEAD
 Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
 =======
-
-Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
-
-
-  //Investor
-  Route::prefix("investors")->group(function (){
-      Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
-  });
-
-});
 
 
 >>>>>>> 48ea04cfddb4eb192e0539f54b91dd0b1ff52e5b
@@ -69,6 +61,15 @@ Route::prefix("investors")->group(function (){
     Route::post('delete',[\App\Http\Controllers\InvestorController::class,'destroyInvestor']);
     Route::get('show',[\App\Http\Controllers\InvestorController::class,'showMyProfile']);
     
+});
+
+
+
+
+//Communication 
+Route::prefix("communications")->group(function (){
+
+  Route::post('/{id}', [\App\Http\Controllers\CommunicationController::class, 'store']);
 });
 
 
