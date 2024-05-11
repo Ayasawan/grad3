@@ -28,12 +28,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-<<<<<<< HEAD
 Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
-=======
 
 
->>>>>>> 48ea04cfddb4eb192e0539f54b91dd0b1ff52e5b
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
 

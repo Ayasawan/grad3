@@ -46,12 +46,6 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
         Route::get('Name/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByName']);
         Route::get('Amount/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByAmount']);
 
-<<<<<<< HEAD
-
-    });
-    Route::prefix("reports")->group(function (){
-=======
->>>>>>> 48ea04cfddb4eb192e0539f54b91dd0b1ff52e5b
 
     });
     
@@ -61,20 +55,6 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 });
 
 
-<<<<<<< HEAD
-Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
-
-
-        //Investor
-        Route::prefix("investors")->group(function (){
-            Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'show']);
-        });
-
-});
-
-
-=======
->>>>>>> 48ea04cfddb4eb192e0539f54b91dd0b1ff52e5b
 
 Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
   
