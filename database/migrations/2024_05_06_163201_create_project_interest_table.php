@@ -15,10 +15,9 @@ return new class extends Migration
         Schema::create('project_interest', function (Blueprint $table) {
             $table->unsignedBigInteger('project_id');
             $table->unsignedBigInteger('interest_id');
-            $table->timestamps();
-
             $table->foreign('project_id')->references('id')->on('projects')->onDelete('cascade');
             $table->foreign('interest_id')->references('id')->on('interests')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

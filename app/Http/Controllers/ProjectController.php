@@ -119,39 +119,6 @@ class ProjectController extends Controller
 
 
 
-
-    // public function store(Request $request)
-    // {
-    //     $input=$request->all();
-    //     $validator = Validator::make($input , [
-    //         'name'=>'required',
-    //         'description'=>'required',
-    //         'image'=>['nullable',],
-           
-    //     ]);
-
-    //     $file_name=$this->saveImage($request->image,'images/article');
-
-    //     //   $file_name=$this->uploadImage($request->image);
-
-
-    //     if ($validator->fails()){
-    //         return $this->apiResponse(null,$validator ->errors() , 400);
-    //     }
-    //     // $fullImagePath = $file_name ? 'public/images/article/' . $file_name : null;
-
-    //     $article = Article::query()->create([
-    //         'name' => $request->name,
-    //         'description' => $request->description,
-    //         'image' => $file_name,
-
-    //     ]);
-    //     if($article) {
-    //         return $this->apiResponse(new ArticleResource($article), 'This article save', 201);
-    //     }
-    //     return $this->apiResponse(null, 'This article not save', 400);
-    // }
-
 //    public function store(Request $request)
 //    {
 //

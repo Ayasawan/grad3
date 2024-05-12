@@ -17,6 +17,12 @@ use Laravel\Passport\RefreshToken;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\Rule;
 use App\Traits\ApiResponseTrait;
+use App\Notifications\EmailVerificationNotification;
+use Exception;
+use Illuminate\Support\Facades\Log;
+use App\Mail\SendMail;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
 
 class PassportAuthController extends Controller
 {
@@ -98,6 +104,9 @@ class PassportAuthController extends Controller
             $data["token_type"] = 'Bearer';
             $data["access_token"] = $tokenResult->accessToken;
     
+     
+            // $user->notify(new EmailVerificationNotification());
+
             return response()->json($data, Response::HTTP_OK);
         }
     
@@ -241,6 +250,9 @@ class PassportAuthController extends Controller
         $token->revoke();
         return response()->json([  'message' => 'Successfully logged out' ]);
     }
+
+
+
 
 
 }
