@@ -17,11 +17,13 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 
+
 Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], function () {
 
     Route::prefix("Article")->group(function (){
         Route::get('/',[\App\Http\Controllers\ArticleController::class,'index']);
         Route::get('/{id}',[\App\Http\Controllers\ArticleController::class,'show']);
+
     });
 
     Route::prefix("Type")->group(function (){
@@ -31,6 +33,11 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 
     });
 
+    Route::prefix("Interest")->group(function (){
+        Route::get('/',[\App\Http\Controllers\InterestController::class,'index']);
+        Route::get('/{id}',[\App\Http\Controllers\InterestController::class,'show']);
+
+    });
 
     Route::prefix("/{id}/Evaluation")->group(function (){
               Route::get('/', [EvaluationController::class, 'index']);
@@ -42,6 +49,8 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     Route::prefix("projects")->group(function (){
         Route::get('/',[\App\Http\Controllers\ProjectController::class,'index']);
         Route::get('/{id}',[\App\Http\Controllers\ProjectController::class,'show']);
+        Route::get('Name/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByName']);
+        Route::get('Amount/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByAmount']);
 
 
     });
@@ -52,18 +61,15 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 });
 
 
-Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
-
-        //Investor
-        Route::prefix("investors")->group(function (){
-            Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'show']);
-        });
-
-});
-
-
-
+Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
+  
+    //Investor
+    Route::prefix("investors")->group(function (){
+        Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
+    });
+  
+  });
 
 
 Route::group(['middleware' => ['auth:user-api,admin-api']], function () {
@@ -98,7 +104,11 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
             Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroyAdmin']);
         });
 
-
+    Route::prefix("Interest")->group(function (){
+         Route::post('/',[\App\Http\Controllers\InterestController::class,'store']);
+        Route::post('update/{id}',[\App\Http\Controllers\InterestController::class,'update']);
+        Route::post('delete/{id}',[\App\Http\Controllers\InterestController::class,'destroy']);
+    });
         //Tracking
         Route::prefix("trackings")->group(function (){
 
@@ -115,7 +125,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
           Route::prefix("investors")->group(function (){
 
             Route::get('/',[\App\Http\Controllers\InvestorController::class,'index']);
-            Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'show']);
+            Route::get('showForAdmin/{id}',[\App\Http\Controllers\InvestorController::class,'showForAdmin']);
             Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
         });
 
@@ -139,6 +149,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
             Route::post('update/{id}',[\App\Http\Controllers\TypeController::class,'update']);
             Route::post('delete/{id}',[\App\Http\Controllers\TypeController::class,'destroy']);
         });
+
     Route::prefix("Transaction")->group(function (){
         Route::get('/', [TransactionController::class, 'index']);
         Route::get('/review-requests', [\App\Http\Controllers\TransactionController::class,'reviewRequests']);
@@ -149,4 +160,15 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::post('update/{id}',[\App\Http\Controllers\TransactionController::class,'update']);
         Route::post('delete/{id}',[\App\Http\Controllers\TransactionController::class,'destroy']);
     });
+
+
+
+        //Communication 
+    Route::prefix("communications")->group(function (){
+        Route::get('/{id}', [\App\Http\Controllers\CommunicationController::class, 'show']);
+        Route::get('acceptRequest/{id}', [\App\Http\Controllers\CommunicationController::class, 'acceptRequest']);
+    });
+
+
+
     });

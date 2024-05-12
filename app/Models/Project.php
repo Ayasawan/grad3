@@ -9,10 +9,10 @@ class Project extends Model
 {
     use HasFactory;
 
-    
+
     protected $table = "projects";
 
-    protected $fillable = ['description','feasibility_study','amount','location','investor_id','user_id','type_id',];
+    protected $fillable = ['name','description','feasibility_study','amount','location','investor_id','user_id','type_id',];
 
     protected $primaryKey = "id";
     public $timestamps = true ;
@@ -43,10 +43,10 @@ class Project extends Model
         return $this->hasMany( Statistic::class,'project_id');
     }
 
-    public function interests(){
-        return $this->hasMany( Interest::class,'project_id');
+    public function interests()
+    {
+        return $this->belongsToMany(Interest::class, 'project_interest', 'project_id', 'interest_id');
     }
-
     public function reports(){
         return $this->hasMany( Report::class,'project_id');
     }
