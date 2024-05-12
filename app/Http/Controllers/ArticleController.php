@@ -33,12 +33,13 @@ class ArticleController extends Controller
 
         $file_name=$this->saveImage($request->image,'images/article');
 
-
+        //   $file_name=$this->uploadImage($request->image);
 
 
         if ($validator->fails()){
             return $this->apiResponse(null,$validator ->errors() , 400);
         }
+        // $fullImagePath = $file_name ? 'public/images/article/' . $file_name : null;
 
         $article = Article::query()->create([
             'name' => $request->name,

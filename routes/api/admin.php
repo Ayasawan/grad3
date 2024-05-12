@@ -12,6 +12,10 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Route::get('request_otp', 'API\AuthController@requestOtp');
+// Route::post('verify_otp', 'API\AuthController@verifyOtp');
+
+
 
 Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], function () {
 
@@ -23,6 +27,8 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     Route::prefix("Type")->group(function (){
         Route::get('/{id}',[\App\Http\Controllers\TypeController::class,'show']);
         Route::get('/',[\App\Http\Controllers\TypeController::class,'index']);
+        Route::get('/showProjectsByType/{id}',[\App\Http\Controllers\TypeController::class,'showProjectsByType']);
+
     });
 
 
