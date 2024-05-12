@@ -17,23 +17,29 @@ class ProjectController extends Controller
 {
     use  ApiResponseTrait;
 
-    public function index()
+    public function indexAdmin()
     {
-        $Project = ProjectResource::collection(Project::get());
+        $Project = ProjectResource::collection(Project::where('accept_status', 0)->get());
         return $this->apiResponse($Project, 'ok', 200);
     }
 
+
+
+    public function indexPublic()
+    {
+        $Project = ProjectResource::collection(Project::where('accept_status', 1)->get());
+        return $this->apiResponse($Project, 'ok', 200);
+    }
+
+
+    
+    
+
     public function store(Request $request)
     {
-<<<<<<< Updated upstream
         $input = $request->all();
         $validator = Validator::make($input, [
-=======
-        
-        $input=$request->all();
-        $validator = Validator::make( $input, [
             'name' => 'required',
->>>>>>> Stashed changes
             'description' => 'required',
             'feasibility_study' => 'required',
             'amount' => 'required',
@@ -41,29 +47,44 @@ class ProjectController extends Controller
             'type_id' => 'required',
             'interests' => 'required|array', // مصفوفة من الاهتمامات المختارة
             'interests.*' => 'integer', // تأكيد أن قيم الاهتمامات هي أعداد صحيحة
+            // New fields for user information
+            'iD_card' => ['nullable',],
+            'personal_photo' => ['nullable',],
+            'property_deed' => ['nullable',],
+            'clean_record' => ['nullable',],
         ]);
 
+
+        // Upload user images
+        $IDCardFile=$this->saveImage($request->iD_card,'images/article');
+        $personalPhotoFile=$this->saveImage($request->personal_photo,'images/article');
+        $propertyDeedFile=$this->saveImage($request->property_deed,'images/article');
+        $cleanRecordFile=$this->saveImage($request->clean_record,'images/article');
+
+        
         if ($validator->fails()) {
             return $this->apiResponse(null, $validator->errors(), 400);
         }
+
+
 
         if ($request->hasFile('feasibility_study')) {
             $file = $request->file('feasibility_study');
             $fileName = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('feasibility_study/Project'), $fileName);
         }
+      
 
-<<<<<<< Updated upstream
+
         $projectData = [
-=======
-        
-        $Project = Project::query()->create([
             'name' => $request->name,
->>>>>>> Stashed changes
             'description' => $request->description,
             'feasibility_study' => $fileName,
             'amount' => $request->amount,
             'location' => $request->location,
+            'investment_status' => false,
+            'accept_status' => false,
+
             'investor_id' => '1',
             'user_id' => Auth::id(),
             'type_id' => $request->type_id,
@@ -71,6 +92,18 @@ class ProjectController extends Controller
 
         $project = Project::create($projectData);
 
+          // Update user's record with uploaded images
+          $user = auth()->user();
+          $userData = [
+              'iD_card' => $IDCardFile,
+              'personal_photo' => $personalPhotoFile,
+              'property_deed' => $propertyDeedFile,
+              'clean_record' =>  $cleanRecordFile,
+          
+          ];
+          $user->update($userData);
+
+              
         if ($project) {
             $interests = $request->interests;
             $project->interests()->attach($interests);
@@ -83,6 +116,42 @@ class ProjectController extends Controller
 
         return $this->apiResponse(null, 'لم يتم حفظ المشروع', 400);
     }
+
+
+
+
+    // public function store(Request $request)
+    // {
+    //     $input=$request->all();
+    //     $validator = Validator::make($input , [
+    //         'name'=>'required',
+    //         'description'=>'required',
+    //         'image'=>['nullable',],
+           
+    //     ]);
+
+    //     $file_name=$this->saveImage($request->image,'images/article');
+
+    //     //   $file_name=$this->uploadImage($request->image);
+
+
+    //     if ($validator->fails()){
+    //         return $this->apiResponse(null,$validator ->errors() , 400);
+    //     }
+    //     // $fullImagePath = $file_name ? 'public/images/article/' . $file_name : null;
+
+    //     $article = Article::query()->create([
+    //         'name' => $request->name,
+    //         'description' => $request->description,
+    //         'image' => $file_name,
+
+    //     ]);
+    //     if($article) {
+    //         return $this->apiResponse(new ArticleResource($article), 'This article save', 201);
+    //     }
+    //     return $this->apiResponse(null, 'This article not save', 400);
+    // }
+
 //    public function store(Request $request)
 //    {
 //
@@ -136,6 +205,11 @@ class ProjectController extends Controller
     }
 
 
+
+
+
+
+
     public function update(Request $request,  $id)
     {
         $Project= Project::find($id);
@@ -183,6 +257,23 @@ class ProjectController extends Controller
         if ($projects) {
             return $this->apiResponse($projects, 'ok', 200);
         }
+    }
+
+
+
+    
+    public function acceptProject($id)
+    {
+        $project = Project::find($id);
+    
+        if (!$project) {
+            return response()->json(['message' => 'لم يتم العثور على المشروع.'], 404);
+        }
+    
+        $project->accept_status = 1;
+        $project->save();
+    
+        return response()->json(['message' => 'تم قبول المشروع بنجاح.']);
     }
 
 
