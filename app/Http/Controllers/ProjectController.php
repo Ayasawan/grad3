@@ -56,10 +56,10 @@ class ProjectController extends Controller
 
 
         // Upload user images
-        $IDCardFile=$this->saveImage($request->iD_card,'images/article');
-        $personalPhotoFile=$this->saveImage($request->personal_photo,'images/article');
-        $propertyDeedFile=$this->saveImage($request->property_deed,'images/article');
-        $cleanRecordFile=$this->saveImage($request->clean_record,'images/article');
+        $IDCardFile=$this->saveImage($request->iD_card,'images/user');
+        $personalPhotoFile=$this->saveImage($request->personal_photo,'images/user');
+        $propertyDeedFile=$this->saveImage($request->property_deed,'images/user');
+        $cleanRecordFile=$this->saveImage($request->clean_record,'images/user');
 
         
         if ($validator->fails()) {
