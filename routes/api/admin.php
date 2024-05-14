@@ -47,7 +47,7 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 
 
     Route::prefix("projects")->group(function (){
-        Route::get('/',[\App\Http\Controllers\ProjectController::class,'index']);
+       
         Route::get('/{id}',[\App\Http\Controllers\ProjectController::class,'show']);
         Route::get('Name/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByName']);
         Route::get('Amount/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByAmount']);
@@ -58,6 +58,14 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     Route::prefix("reports")->group(function (){
     Route::get('/{project_id}',[\App\Http\Controllers\ReportController::class,'projectReports']);
     });
+
+
+
+      //Project
+      Route::prefix("projects")->group(function (){
+        Route::get('/',[\App\Http\Controllers\ProjectController::class,'indexPublic']);
+    });
+
 });
 
 
@@ -162,9 +170,16 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     });
 
 
+    //Project
+    Route::prefix("projects")->group(function (){
+        Route::get('/',[\App\Http\Controllers\ProjectController::class,'indexAdmin']);
+        Route::get('acceptProject/{id}',[\App\Http\Controllers\ProjectController::class,'acceptProject']);
+    });
 
+        
         //Communication 
     Route::prefix("communications")->group(function (){
+        Route::get('/', [\App\Http\Controllers\CommunicationController::class, 'index']);
         Route::get('/{id}', [\App\Http\Controllers\CommunicationController::class, 'show']);
         Route::get('acceptRequest/{id}', [\App\Http\Controllers\CommunicationController::class, 'acceptRequest']);
     });

@@ -18,6 +18,9 @@ return new class extends Migration
             $table->text('feasibility_study');
             $table->integer('amount');
             $table->text('location');
+            $table->boolean('investment_status')->default(false);
+            $table->boolean('accept_status')->default(false);
+
             $table->foreignId('investor_id')->constrained('investors')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('type_id')->constrained('types')->cascadeOnDelete();

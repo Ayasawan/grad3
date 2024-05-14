@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Communication;
+use App\Models\Project;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -21,10 +22,12 @@ class CommunicationController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        //
-    }
+   
+     public function index()
+     {
+         $Communication = CommunicationResource::collection(Communication::get());
+         return $this->apiResponse($Communication, 'ok', 200);
+     }
 
     /**
      * Store a newly created resource in storage.
@@ -57,21 +60,28 @@ class CommunicationController extends Controller
     }
 
 
-
     public function acceptRequest($id)
-{
-    $communication = Communication::find($id);
-
-    if (!$communication) {
-        return response()->json(['message' => 'لم يتم العثور على طلب التواصل.'], 404);
+    {
+        $communication = Communication::find($id);
+    
+        if (!$communication) {
+            return response()->json(['message' => 'Communication request not found.'], 404);
+        }
+    
+        $communication->status = 1;
+        $communication->save();
+    
+        // Update investment status in the associated project table
+        $project = Project::find($communication->project_id);
+        if ($project) {
+            $project->investment_status = 1;
+            $project->investor_id = $communication->investor_id; // Store investor number
+            $project->save();
+        }
+    
+        return response()->json(['message' => 'Communication request accepted successfully.']);
     }
-
-    $communication->status = 1;
-    $communication->save();
-
-    return response()->json(['message' => 'تم قبول طلب التواصل بنجاح.']);
-}
-
+    
     /**
      * Update the specified resource in storage.
      */
