@@ -17,7 +17,9 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('user_type');
             $table->string('email')->unique();
+            $table->boolean('verified')->default(false);
             $table->string('password');
+            $table->string('otp')->nullable();
             $table->string('phone')->nullable();
             $table->text('location')->nullable();
             $table->text('iD_card')->nullable();

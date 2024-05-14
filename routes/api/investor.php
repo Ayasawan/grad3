@@ -33,6 +33,7 @@ Route::post('investor/{investorId}/interests', [InvestorController::class, 'addI
 
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
+Route::post('verify_otpInv',[\App\Http\Controllers\PassportAuthController::class,'verifyOtpInv']);
 
 Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scopes:investor'] ],function(){
    // authenticated staff routes here
