@@ -3,7 +3,12 @@
 namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
 use App\Models\Interest;
+<<<<<<< HEAD
 use App\Models\User;
+=======
+use App\Models\Project;
+use App\Http\Resources\ProjectResource;
+>>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 use App\Traits\ApiResponseTrait;
 
 use App\Models\Investor;
@@ -36,41 +41,99 @@ class InvestorController extends Controller
      * Display the specified resource.
      */
     public function showMyProfile()
+<<<<<<< HEAD
 
+=======
+>>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
     {
         $user = auth()->user();
-
+    
         if (!$user) {
-            return response()->json ("User not authenticated", 401);
+            return response()->json("User not authenticated", 401);
         }
-        // $Investor= Investor::find($id);
-        $id =$user->id;
-
-        $Investor= Investor::find($id);
-
-        if($Investor){
-            return $this->apiResponse(new InvestorResource($Investor) , 'ok' ,200);
+    
+        $investor = Investor::find($user->id);
+    
+        if (!$investor) {
+            return $this->apiResponse(null, 'Investor not found', 404);
         }
-        return $this->apiResponse(null ,'the Investor not found' ,404);
-
+    
+        // Retrieve all projects associated with the investor
+        $projects = Project::where('investor_id', $user->id)->get();
+    
+        // Include investor information along with associated projects
+        $data = [
+            'investor' => new InvestorResource($investor),
+            'projects' => ProjectResource::collection($projects)
+        ];
+    
+        return $this->apiResponse($data, 'ok', 200);
     }
+    
 
 
 
     public function showProfileByAnother($id)
+<<<<<<< HEAD
 {
     $investor = Investor::find($id);
 
     if ($investor) {
+=======
+    {
+        $investor = Investor::find($id);
+    
+        if (!$investor) {
+            return $this->apiResponse(null, 'The investor was not found', 404);
+        }
+    
+        // Retrieve all projects associated with the investor
+        $projects = Project::where('investor_id', $id)->get();
+    
+        // Prepare data to be returned
+>>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
         $data = [
-            'first_name' => $investor->first_name,
-            'last_name' => $investor->last_name,
-            'user_type' => $investor->user_type,
-            'location' => $investor->location,
+            'investor' => [
+                'first_name' => $investor->first_name,
+                'last_name' => $investor->last_name,
+                'user_type' => $investor->user_type,
+                'location' => $investor->location,
+            ],
+            'projects' => $projects->map(function ($project) {
+                return [
+                    'name' => $project->name,
+                    'description' => $project->description,
+                    'location' => $project->location,
+                    'type_id' => $project->type_id,
+                ];
+            }),
+        ];
+    
+        return $this->apiResponse($data, 'ok', 200);
+    }
+    
+
+
+
+    public function showForAdmin($id)
+    {
+        $investor = Investor::find($id);
+        
+        if (!$investor) {
+            return $this->apiResponse(null, 'The investor was not found', 404);
+        }
+        
+        // Retrieve all projects associated with the investor
+        $projects = Project::where('investor_id', $id)->get();
+        
+        $data = [
+            'investor' => new InvestorResource($investor),
+            'projects' => ProjectResource::collection($projects)
         ];
 
         return $this->apiResponse($data, 'ok', 200);
     }
+<<<<<<< HEAD
 
     return $this->apiResponse(null, 'The investor was not found', 404);
 }
@@ -124,6 +187,9 @@ public function showForAdmin($id)
         return $this->apiResponse(null ,'the User not found' ,404);
 
     }
+=======
+    
+>>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 
 
 

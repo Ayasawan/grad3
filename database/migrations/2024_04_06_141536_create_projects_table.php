@@ -13,10 +13,13 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->text('description');
             $table->text('feasibility_study');
             $table->integer('amount');
             $table->text('location');
+            $table->boolean('investment_status')->default(false);
+            $table->boolean('accept_status')->default(false);
 
             $table->foreignId('investor_id')->constrained('investors')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();

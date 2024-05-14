@@ -3,6 +3,8 @@
 
 use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\PassportAuthController;
+use App\Http\Controllers\CommunicationController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +28,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
+<<<<<<< HEAD
 
 Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
 
@@ -45,8 +48,14 @@ Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
 
 
 
+=======
+Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
+
+
+>>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
+Route::post('verify_otpInv',[\App\Http\Controllers\PassportAuthController::class,'verifyOtpInv']);
 
 Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scopes:investor'] ],function(){
    // authenticated staff routes here
@@ -72,6 +81,15 @@ Route::prefix("investors")->group(function (){
     Route::post('delete',[\App\Http\Controllers\InvestorController::class,'destroyInvestor']);
     Route::get('show',[\App\Http\Controllers\InvestorController::class,'showMyProfile']);
 
+});
+
+
+
+
+//Communication 
+Route::prefix("communications")->group(function (){
+
+  Route::post('/{id}', [\App\Http\Controllers\CommunicationController::class, 'store']);
 });
 
 

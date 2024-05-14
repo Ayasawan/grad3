@@ -16,7 +16,7 @@ class Investor extends Authenticatable
 
     protected $table = "investors";
 
-    protected $fillable = ['first_name','last_name','user_type','email','password','phone','location','iD_card','personal_photo'];
+    protected $fillable = ['first_name','last_name','user_type','email','password','otp','phone','location','iD_card','personal_photo'];
 
     protected $primaryKey = "id";
     public $timestamps = true ;

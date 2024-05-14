@@ -12,7 +12,7 @@ class Project extends Model
 
     protected $table = "projects";
 
-    protected $fillable = ['description','feasibility_study','amount','location','investor_id','user_id','type_id',];
+    protected $fillable = ['name','description','feasibility_study','amount','location','investor_id','user_id','type_id',];
 
     protected $primaryKey = "id";
     public $timestamps = true ;

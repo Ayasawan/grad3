@@ -9,6 +9,8 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 // use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use App\Http\Controllers\EmailController;
+use App\Mail\WelcomeMail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
@@ -17,6 +19,12 @@ use Laravel\Passport\RefreshToken;
 use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Validation\Rule;
 use App\Traits\ApiResponseTrait;
+use App\Notifications\EmailVerificationNotification;
+use Exception;
+use Illuminate\Support\Facades\Log;
+use App\Mail\SendMail;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
 
 class PassportAuthController extends Controller
 {
@@ -82,6 +90,7 @@ class PassportAuthController extends Controller
             'last_name' => $request->last_name,
             'user_type' => 'user',
             'email' => $request->email,
+            'otp' => null,
             'password' => $request->password,
             'phone' => $request->phone,
             'location' => $request->location,
@@ -91,13 +100,23 @@ class PassportAuthController extends Controller
             'clean_record' => null,
         ]);
     
-        if ($tokenResult = $user->createToken('Personal Access Token')) {
-            $data["message"] = 'User successfully registered';
+        // if ($tokenResult = $user->createToken('Personal Access Token')) {
+        //     $data["message"] = 'User successfully registered';
+        //     $data["user_type"] = 'user';
+        //     $data["user"] = $user;
+        //     $data["token_type"] = 'Bearer';
+        //     $data["access_token"] = $tokenResult->accessToken;
+        if ($user) {
+            $data["message"] = 'Thank you for registering..Please check your email.. We are waiting for you to verify your account';
             $data["user_type"] = 'user';
             $data["user"] = $user;
-            $data["token_type"] = 'Bearer';
-            $data["access_token"] = $tokenResult->accessToken;
-    
+            // $data["token_type"] = 'Bearer';
+            // $data["access_token"] = $tokenResult->accessToken;
+            $data["OTP"]=$this->requestOtp($request,'User');
+
+     
+            // $user->notify(new EmailVerificationNotification());
+
             return response()->json($data, Response::HTTP_OK);
         }
     
@@ -114,23 +133,29 @@ class PassportAuthController extends Controller
             'email' => 'required|email',
             'password' => 'required',
         ]);
-
         if($validator->fails()){
             return response()->json(['error' => $validator->errors()->all()]);
         }
 
         if(auth()->guard('user')->attempt(['email' => request('email'), 'password' => request('password')])){
 
-            config(['auth.guards.api.provider' => 'user']);
+            $user = User::where('email', request('email'))->first();
+        
+            if ($user->verified) {
+                config(['auth.guards.api.provider' => 'user']);
 
-            $user = User::select('users.*')->find(auth()->guard('user')->user()->id);
-            $success =  $user;
-            $success["user_type"] = 'user ';
-            $success['token'] =  $user->createToken('MyApp',['user'])->accessToken;
+                $user = User::select('users.*')->find(auth()->guard('user')->user()->id);
+                $success =  $user;
+                $success["user_type"] = 'user ';
+                $success['token'] =  $user->createToken('MyApp',['user'])->accessToken;
 
-            return response()->json($success, 200);
-        }else{
-            return response()->json(['error' => ['Email and Password are Wrong.']], 401);
+                return response()->json($success, 200);
+            } else {
+                return response()->json(['error' => ['Email and Password are correct, but the account is not verified.']], 401);
+            }
+            
+        } else {
+            return response()->json(['error' => ['Email and Password are wrong.']], 401);
         }
     }
 
@@ -191,12 +216,19 @@ class PassportAuthController extends Controller
             'personal_photo' => null,
         ]);
     
-        if ($tokenResult = $investor->createToken('Personal Access Token')) {
-            $data["message"] = 'Investor successfully registered';
+        // if ($tokenResult = $investor->createToken('Personal Access Token')) {
+        //     $data["message"] = 'Investor successfully registered';
+        //     $data["user_type"] = 'investor';
+        //     $data["investor"] = $investor;
+        //     $data["token_type"] = 'Bearer';
+        //     $data["access_token"] = $tokenResult->accessToken;
+        if ($investor) {
+            $data["message"] = 'Thank you for registering..Please check your email.. We are waiting for you to verify your account';
             $data["user_type"] = 'investor';
-            $data["investor"] = $investor;
-            $data["token_type"] = 'Bearer';
-            $data["access_token"] = $tokenResult->accessToken;
+            $data["user"] = $investor;
+            // $data["token_type"] = 'Bearer';
+            // $data["access_token"] = $tokenResult->accessToken;
+            $data["OTP"]=$this->requestOtp($request,'Investor');
     
             return response()->json($data, Response::HTTP_OK);
         }
@@ -220,17 +252,47 @@ class PassportAuthController extends Controller
         }
         if(auth()->guard('investor')->attempt(['email' => request('email'), 'password' => request('password')])){
 
-            config(['auth.guards.api.provider' => 'investor']);
-            $investor = Investor::select('investors.*')->find(auth()->guard('investor')->user()->id);
-            $success =  $investor;
-            $success["user_type"] = 'investor ';
-            $success['token'] =  $investor->createToken('MyApp',['investor'])->accessToken;
+            $investor = Investor::where('email', request('email'))->first();
+        
+            if ($investor->verified) {
+                config(['auth.guards.api.provider' => 'investor']);
+                $investor = Investor::select('investors.*')->find(auth()->guard('investor')->user()->id);
+                $success =  $investor;
+                $success["user_type"] = 'investor ';
+                $success['token'] =  $investor->createToken('MyApp',['investor'])->accessToken;
 
-            return response()->json($success, 200);
-        }else{
-            return response()->json(['error' => ['Email and Password are Wrong.']], 401);
+                return response()->json($success, 200);
+            } else {
+                return response()->json(['error' => ['Email and Password are correct, but the account is not verified.']], 401);
+            }
+            
+        } else {
+            return response()->json(['error' => ['Email and Password are wrong.']], 401);
         }
     }
+            // $investor = Investor::where('email', $request->email)->first();
+        
+        // if ($investor) {
+        //     if ($investor->otp !== null) { // تحقق من وجود قيمة فعلية في حقل "otp"
+        //         if (auth()->guard('investor')->attempt(['email' => request('email'), 'password' => request('password')])) {
+        //             config(['auth.guards.api.provider' => 'investor']);
+
+        //             $investor = Investor::select('investors.*')->find(auth()->guard('investor')->user()->id);
+        //             $success = $investor;
+        //             $success["user_type"] = 'investor ';
+        //             $success['token'] = $investor->createToken('MyApp', ['investor'])->accessToken;
+
+        //             return response()->json($success, 200);
+        //         } else {
+        //             return response()->json(['error' => ['Email and Password are Wrong.']], 401);
+        //         }
+        //     } else {
+        //         return response()->json(['error' => ['Account not verified.']], 401);
+        //     }
+        // } else {
+        //     return response()->json(['error' => ['investor not found.']], 404);
+        // }
+    
 
 
 
@@ -242,5 +304,87 @@ class PassportAuthController extends Controller
         return response()->json([  'message' => 'Successfully logged out' ]);
     }
 
+
+
+//////
+
+public function sendWelcomeEmail()
+{
+    $title = 'Welcome to the laracoding.com example email';
+    $body = 'Thank you for participating!';
+
+    Mail::to('abeerasidah@gmail.com')->send(new WelcomeMail($title, $body));
+
+    return "Email sent successfully!";
+}
+     
+public function requestOtp(Request $request, $modelName)
+{
+    $otp = rand(1000, 9999);
+    Log::info("otp = " . $otp);
+
+    $model = app('App\\Models\\' . $modelName); // استبدل 'App\\Models\\' بالمسار الصحيح لمجلد النماذج الخاص بك
+
+    $user = $model->where('email', '=', $request->email)->update(['otp' => $otp]);
+
+    if ($user) {
+        // send otp in the email
+        $title = 'Testing Application OTP';
+        $body = 'Your OTP is: ' . $otp;
+
+        Mail::to($request->email)->send(new WelcomeMail($title, $body));
+
+        return response(["status" => 200, "message" => "OTP sent successfully"]);
+    } else {
+        return response(["status" => 401, 'message' => 'Invalid']);
+    }
+}
+
+
+    public function verifyOtp(Request $request)
+    {
+        $user = User::where([['email', '=', $request->email], ['otp', '=', $request->otp]])->first();
+    
+        if ($user) {
+            $user->verified = true;
+            $user->save();
+            auth()->login($user);
+    
+            $tokenResult = $user->createToken('Personal Access Token');
+    
+            $data["message"] = 'User successfully registered';
+            $data["user_type"] = 'user';
+            $data["user"] = $user;
+            $data["token_type"] = 'Bearer';
+            $data["access_token"] = $tokenResult->accessToken;
+    
+            return response()->json($data, 200);
+        } else {
+            return response()->json(['message' => 'Invalid'], 401);
+        }
+    }
+
+    public function verifyOtpInv(Request $request)
+    {
+        $investor = Investor::where([['email', '=', $request->email], ['otp', '=', $request->otp]])->first();
+    
+        if ($investor) {
+            $investor->verified = true;
+            $investor->save();
+            auth()->login($investor);
+    
+            $tokenResult = $investor->createToken('Personal Access Token');
+    
+            $data["message"] = 'User successfully registered';
+            $data["user_type"] = 'user';
+            $data["user"] = $investor;
+            $data["token_type"] = 'Bearer';
+            $data["access_token"] = $tokenResult->accessToken;
+    
+            return response()->json($data, 200);
+        } else {
+            return response()->json(['message' => 'Invalid'], 401);
+        }
+    }
 
 }
