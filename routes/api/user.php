@@ -36,7 +36,13 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
 //    Route::get('dashboard',[PassportAuthController::class, 'userDashboard']);
     Route::get('logout',[PassportAuthController::class,'logout'])->name('userLogout');
 
+//user
+    Route::prefix("users")->group(function (){
+        Route::post('update/{id}',[\App\Http\Controllers\InvestorController::class,'updateUser']);
+        Route::post('delete',[\App\Http\Controllers\InvestorController::class,'destroyUser']);
+        Route::get('show',[\App\Http\Controllers\InvestorController::class,'showMyProfileUser']);
 
+    });
 
   //Project
   Route::prefix("projects")->group(function (){

@@ -26,9 +26,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-<<<<<<< HEAD
+
 Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
-=======
+
 
 Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
 
@@ -37,11 +37,14 @@ Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
   Route::prefix("investors")->group(function (){
       Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
   });
+    Route::prefix("users")->group(function (){
+        Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnotherUser']);
+    });
 
 });
 
 
->>>>>>> 48ea04cfddb4eb192e0539f54b91dd0b1ff52e5b
+
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
 
@@ -68,7 +71,7 @@ Route::prefix("investors")->group(function (){
     Route::post('update/{id}',[\App\Http\Controllers\InvestorController::class,'update']);
     Route::post('delete',[\App\Http\Controllers\InvestorController::class,'destroyInvestor']);
     Route::get('show',[\App\Http\Controllers\InvestorController::class,'showMyProfile']);
-    
+
 });
 
 

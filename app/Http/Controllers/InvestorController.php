@@ -1,13 +1,16 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Http\Resources\UserResource;
 use App\Models\Interest;
+use App\Models\User;
 use App\Traits\ApiResponseTrait;
 
 use App\Models\Investor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Resources\InvestorResource;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -33,7 +36,7 @@ class InvestorController extends Controller
      * Display the specified resource.
      */
     public function showMyProfile()
-    
+
     {
         $user = auth()->user();
 
@@ -57,7 +60,7 @@ class InvestorController extends Controller
     public function showProfileByAnother($id)
 {
     $investor = Investor::find($id);
-    
+
     if ($investor) {
         $data = [
             'first_name' => $investor->first_name,
@@ -65,10 +68,10 @@ class InvestorController extends Controller
             'user_type' => $investor->user_type,
             'location' => $investor->location,
         ];
-        
+
         return $this->apiResponse($data, 'ok', 200);
     }
-    
+
     return $this->apiResponse(null, 'The investor was not found', 404);
 }
 
@@ -76,16 +79,109 @@ class InvestorController extends Controller
 
 public function showForAdmin($id)
 {
-    $investor = Investor::find($id);
-    
-    if ($investor) {
-        return $this->apiResponse(new InvestorResource($investor), 'ok', 200);
+    $User = User::find($id);
+
+    if ($User) {
+        return $this->apiResponse(new UserResource($User), 'ok', 200);
     }
-    
-    return $this->apiResponse(null, 'The investor was not found', 404);
+
+    return $this->apiResponse(null, 'The User was not found', 404);
 }
+//user
+    public function indexUser()
+    {
+        $User = UserResource::collection(User::get());
+        return $this->apiResponse($User, 'ok', 200);
+    }
+    public function destroyAdminUser( $id)
+    {
+        $User =  User::find($id);
+
+        if(!$User){
+            return $this->apiResponse(null, 'This User not found', 404);
+        }
+
+        $User->delete($id);
+        return $this->apiResponse(null, 'This User deleted', 200);
+    }
+
+    public function showMyProfileUser()
+
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return response()->json ("User not authenticated", 401);
+        }
+        // $Investor= Investor::find($id);
+        $id =$user->id;
+
+        $User= User::find($id);
+
+        if($User){
+            return $this->apiResponse(new UserResource($User) , 'ok' ,200);
+        }
+        return $this->apiResponse(null ,'the User not found' ,404);
+
+    }
 
 
+
+    public function showProfileByAnotherUser($id)
+    {
+        $User= User::find($id);
+
+        if ($User) {
+            $data = [
+                'first_name' => $User->first_name,
+                'last_name' => $User->last_name,
+                'user_type' => $User->user_type,
+                'location' => $User->location,
+            ];
+
+            return $this->apiResponse($data, 'ok', 200);
+        }
+
+        return $this->apiResponse(null, 'The investor was not found', 404);
+    }
+
+
+
+    public function showForAdminUser($id)
+    {
+        $User = User::find($id);
+
+        if ($User) {
+            return $this->apiResponse(new InvestorResource($User), 'ok', 200);
+        }
+
+        return $this->apiResponse(null, 'The User was not found', 404);
+    }
+    public function updateuser(Request $request,  $id)
+    {
+        $User= User::find($id);
+        if(!$User)
+        {
+            return $this->apiResponse(null ,'the User not found ',404);
+        }
+
+        $User->update($request->all());
+        if($User) {
+            return $this->apiResponse(new UserResource($User), 'the User update', 201);
+
+        }}
+//
+//    public function destroyAdminUser( $id)
+//    {
+//        $User =  User::find($id);
+//
+//        if(!$User){
+//            return $this->apiResponse(null, 'This User not found', 404);
+//        }
+//
+//        $User->delete($id);
+//        return $this->apiResponse(null, 'This User deleted', 200);
+//    }
 
     /**
      * Update the specified resource in storage.
@@ -108,7 +204,7 @@ public function showForAdmin($id)
 
 
 
-    
+
 
     /**
      * Remove the specified resource from storage.
@@ -143,8 +239,28 @@ public function showForAdmin($id)
         }
 
         $Investor->delete();
-        return $this->apiResponse(null, 'This Investor deleted', 200);
+        return $this->apiResponse(null, 'This user deleted', 200);
     }
+    public function destroyUser(Request $request)
+    {
+        $email = $request->input('email');
+        $password = $request->input('password');
+
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return $this->apiResponse(null, 'This user not found', 404);
+        }
+
+        // قم بإجراء التحقق من صحة كلمة المرور
+        if (!Hash::check($password, $user->password)) {
+            return $this->apiResponse(null, 'Invalid password', 401);
+        }
+
+        $user->delete();
+        return $this->apiResponse(null, 'This user deleted', 200);
+    }
+
     public function addInterests(Request $request, $investorId)
     {
         $validatedData = $request->validate([
