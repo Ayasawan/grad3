@@ -47,6 +47,13 @@ Route::get('/{project_id}/specificProjectReport/{report_id}', [ReportController:
 });
 
 
+<<<<<<< HEAD
+=======
+
+Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
+
+
+>>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
 Route::post('verify_otpInv',[\App\Http\Controllers\PassportAuthController::class,'verifyOtpInv']);
