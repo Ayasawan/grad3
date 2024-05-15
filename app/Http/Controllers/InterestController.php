@@ -1,12 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
-    use App\Models\Interest;
-    use App\Http\Controllers\Controller;
-    use Illuminate\Http\Request;
-    use App\Traits\ApiResponseTrait;
-    use App\Http\Resources\InterestResource;
-    use Illuminate\Support\Facades\Validator;
+use App\Models\Interest;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Traits\ApiResponseTrait;
+use App\Http\Resources\InterestResource;
+use Illuminate\Support\Facades\Validator;
 
 class InterestController extends Controller
 {
@@ -87,3 +87,5 @@ class InterestController extends Controller
     }
 
 }
+
+

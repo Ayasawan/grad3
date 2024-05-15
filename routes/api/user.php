@@ -40,9 +40,10 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
 
 //user
     Route::prefix("users")->group(function (){
-        Route::post('update/{id}',[\App\Http\Controllers\InvestorController::class,'updateUser']);
-        Route::post('delete',[\App\Http\Controllers\InvestorController::class,'destroyUser']);
-        Route::get('show',[\App\Http\Controllers\InvestorController::class,'showMyProfileUser']);
+
+        Route::post('update/{id}',[\App\Http\Controllers\UserController::class,'updateUser']);
+        Route::post('delete',[\App\Http\Controllers\UserController::class,'destroyUser']);
+        Route::get('show',[\App\Http\Controllers\UserController::class,'showMyProfileUser']);
 
     });
 
@@ -60,7 +61,12 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
 
     });
 //Report
+    Route::get('/{project_id}/reports', [ReportController::class, 'showReportsFor_user']);
+
     Route::prefix("reports")->group(function (){
+        Route::get('/show',[\App\Http\Controllers\ReportController::class,'userReports']);
+//Route::get('/users/{user_id}/reports', 'ProjectController@showReports');
+
         Route::post('/',[\App\Http\Controllers\ReportController::class,'store']);
         Route::get('/show',[\App\Http\Controllers\ReportController::class,'userReports']);
         Route::post('update/{id}',[\App\Http\Controllers\ReportController::class,'update']);

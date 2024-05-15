@@ -12,14 +12,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-<<<<<<< HEAD
 Route::post('admin/login',[\App\Http\Controllers\PassportAuthController::class,'adminLogin'])->name('adminLogin');
-=======
 // Route::get('request_otp', 'API\AuthController@requestOtp');
 // Route::post('verify_otp', 'API\AuthController@verifyOtp');
 
 
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 
 Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:admin'] ],function() {
     // authenticated staff routes here
@@ -61,9 +58,9 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     //user
     Route::prefix("users")->group(function () {
 
-        Route::get('/', [\App\Http\Controllers\InvestorController::class, 'indexUser']);
-        Route::get('showForAdmin/{id}', [\App\Http\Controllers\InvestorController::class, 'showForAdminUser']);
-        Route::post('delete/{id}', [\App\Http\Controllers\InvestorController::class, 'destroyAdminUser']);
+        Route::get('/', [\App\Http\Controllers\UserController::class, 'indexUser']);
+        Route::get('showForAdmin/{id}', [\App\Http\Controllers\UserController::class, 'showForAdminUser']);
+        Route::post('delete/{id}', [\App\Http\Controllers\UserController::class, 'destroyAdminUser']);
     });
 
 
@@ -123,128 +120,114 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     });
 
     Route::prefix("/{id}/Evaluation")->group(function (){
-              Route::get('/', [EvaluationController::class, 'index']);
-              Route::post('/', [EvaluationController::class, 'store']);
-              Route::post('delete', [EvaluationController::class, 'destroy']);
+        Route::get('/', [EvaluationController::class, 'index']);
+        Route::post('/', [EvaluationController::class, 'store']);
+        Route::post('delete', [EvaluationController::class, 'destroy']);
     });
 
 
     Route::prefix("projects")->group(function (){
-       
+
         Route::get('/{id}',[\App\Http\Controllers\ProjectController::class,'show']);
         Route::get('Name/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByName']);
         Route::get('Amount/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByAmount']);
 
-<<<<<<< HEAD
-
-    });
-    Route::prefix("reports")->group(function (){
-=======
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 
     });
 
     Route::prefix("reports")->group(function (){
-    Route::get('/{project_id}',[\App\Http\Controllers\ReportController::class,'projectReports']);
+        Route::get('/{project_id}',[\App\Http\Controllers\ReportController::class,'projectReports']);
     });
 
 
-<<<<<<< HEAD
 
 
-Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
-=======
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
+    Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
-      //Project
-      Route::prefix("projects")->group(function (){
-        Route::get('/',[\App\Http\Controllers\ProjectController::class,'indexPublic']);
+        //Project
+        Route::prefix("projects")->group(function (){
+            Route::get('/',[\App\Http\Controllers\ProjectController::class,'indexPublic']);
+        });
+
     });
+
+
+
+    Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
+
+        //Investor
+        Route::prefix("investors")->group(function (){
+            Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
+        });
+
+    });
+
+
+    Route::group(['middleware' => ['auth:user-api,admin-api']], function () {
+
+        Route::prefix("projects")->group(function (){
+            Route::post('delete/{id}',[\App\Http\Controllers\ProjectController::class,'destroy']);
+
+        });
+        Route::prefix("Transaction")->group(function (){
+            Route::get('/{projectId}', [TransactionController::class, 'indexx']);
+
+        });
+    });
+
 
 });
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
-Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
-
-    //Investor
-    Route::prefix("investors")->group(function (){
-        Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
-    });
-
-  });
-
-
-Route::group(['middleware' => ['auth:user-api,admin-api']], function () {
-
-    Route::prefix("projects")->group(function (){
-        Route::post('delete/{id}',[\App\Http\Controllers\ProjectController::class,'destroy']);
-
-    });
-    Route::prefix("Transaction")->group(function (){
-        Route::get('/{projectId}', [TransactionController::class, 'indexx']);
-
-    });
-});
-
-
-<<<<<<< HEAD
-});
-=======
 
 
 Route::post('admin/login',[\App\Http\Controllers\PassportAuthController::class,'adminLogin'])->name('adminLogin');
 
 Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:admin'] ],function(){
-   // authenticated staff routes here
+    // authenticated staff routes here
     //Route::get('dashboard',[PassportAuthController::class,'adminDashboard']);
     Route::get('logout',[PassportAuthController::class,'adminlogout'])->name('adminLogout');
     Route::post('delete/{id}', [\App\Http\Controllers\PassportAuthController::class, 'destroy']);
 
 
 
-        //Complaint
-        Route::prefix("complaints")->group(function (){
-            Route::get('/',[\App\Http\Controllers\ComplaintController::class,'index']);
-            Route::get('/{id}',[\App\Http\Controllers\ComplaintController::class,'show']);
-            Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroyAdmin']);
-        });
+    //Complaint
+    Route::prefix("complaints")->group(function (){
+        Route::get('/',[\App\Http\Controllers\ComplaintController::class,'index']);
+        Route::get('/{id}',[\App\Http\Controllers\ComplaintController::class,'show']);
+        Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroyAdmin']);
+    });
 
     Route::prefix("Interest")->group(function (){
-         Route::post('/',[\App\Http\Controllers\InterestController::class,'store']);
+        Route::post('/',[\App\Http\Controllers\InterestController::class,'store']);
         Route::post('update/{id}',[\App\Http\Controllers\InterestController::class,'update']);
         Route::post('delete/{id}',[\App\Http\Controllers\InterestController::class,'destroy']);
     });
-        //Tracking
-        Route::prefix("trackings")->group(function (){
+    //Tracking
+    Route::prefix("trackings")->group(function (){
 
-            Route::get('/',[\App\Http\Controllers\TrackingController::class,'index']);
-            Route::post('/',[\App\Http\Controllers\TrackingController::class,'store']);
-            Route::get('/{id}',[\App\Http\Controllers\TrackingController::class,'show']);
-            Route::post('update/{id}',[\App\Http\Controllers\TrackingController::class,'update']);
-            Route::post('delete/{id}',[\App\Http\Controllers\TrackingController::class,'destroy']);
-        });
-
-
-
-          //Investor
-          Route::prefix("investors")->group(function (){
-
-            Route::get('/',[\App\Http\Controllers\InvestorController::class,'index']);
-            Route::get('showForAdmin/{id}',[\App\Http\Controllers\InvestorController::class,'showForAdmin']);
-            Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
-        });
+        Route::get('/',[\App\Http\Controllers\TrackingController::class,'index']);
+        Route::post('/',[\App\Http\Controllers\TrackingController::class,'store']);
+        Route::get('/{id}',[\App\Http\Controllers\TrackingController::class,'show']);
+        Route::post('update/{id}',[\App\Http\Controllers\TrackingController::class,'update']);
+        Route::post('delete/{id}',[\App\Http\Controllers\TrackingController::class,'destroy']);
+    });
 
 
 
-        Route::prefix("Article")->group(function (){
-            Route::post('/',[\App\Http\Controllers\ArticleController::class,'store']);
-            Route::post('update/{id}',[\App\Http\Controllers\ArticleController::class,'update']);
-            Route::post('delete/{id}',[\App\Http\Controllers\ArticleController::class,'destroy']);
-        });
+    //Investor
+    Route::prefix("investors")->group(function (){
+
+        Route::get('/',[\App\Http\Controllers\InvestorController::class,'index']);
+        Route::get('showForAdmin/{id}',[\App\Http\Controllers\InvestorController::class,'showForAdmin']);
+        Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
+    });
+
+
+
+    Route::prefix("Article")->group(function (){
+        Route::post('/',[\App\Http\Controllers\ArticleController::class,'store']);
+        Route::post('update/{id}',[\App\Http\Controllers\ArticleController::class,'update']);
+        Route::post('delete/{id}',[\App\Http\Controllers\ArticleController::class,'destroy']);
+    });
 
     Route::prefix("reports")->group(function (){
         Route::get('/', [ReportController::class, 'index']);
@@ -253,11 +236,11 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
     });
 
-        Route::prefix("Type")->group(function (){
-            Route::post('/',[\App\Http\Controllers\TypeController::class,'store']);
-            Route::post('update/{id}',[\App\Http\Controllers\TypeController::class,'update']);
-            Route::post('delete/{id}',[\App\Http\Controllers\TypeController::class,'destroy']);
-        });
+    Route::prefix("Type")->group(function (){
+        Route::post('/',[\App\Http\Controllers\TypeController::class,'store']);
+        Route::post('update/{id}',[\App\Http\Controllers\TypeController::class,'update']);
+        Route::post('delete/{id}',[\App\Http\Controllers\TypeController::class,'destroy']);
+    });
 
     Route::prefix("Transaction")->group(function (){
         Route::get('/', [TransactionController::class, 'index']);
@@ -265,7 +248,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::get('/showAccepted', [\App\Http\Controllers\TransactionController::class,'showAcceptedTransactions']);
         Route::get('/{id}',[\App\Http\Controllers\TransactionController::class,'show']);
         Route::post('{id}/approve', [\App\Http\Controllers\TransactionController::class,'approveTransaction']);
-       Route::post('/',[\App\Http\Controllers\TransactionController::class,'store']);
+        Route::post('/',[\App\Http\Controllers\TransactionController::class,'store']);
         Route::post('update/{id}',[\App\Http\Controllers\TransactionController::class,'update']);
         Route::post('delete/{id}',[\App\Http\Controllers\TransactionController::class,'destroy']);
     });
@@ -277,8 +260,8 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::get('acceptProject/{id}',[\App\Http\Controllers\ProjectController::class,'acceptProject']);
     });
 
-        
-        //Communication 
+
+    //Communication
     Route::prefix("communications")->group(function (){
         Route::get('/', [\App\Http\Controllers\CommunicationController::class, 'index']);
         Route::get('/{id}', [\App\Http\Controllers\CommunicationController::class, 'show']);
@@ -287,5 +270,4 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
 
 
-    });
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
+});

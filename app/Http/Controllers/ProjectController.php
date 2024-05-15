@@ -32,8 +32,8 @@ class ProjectController extends Controller
     }
 
 
-    
-    
+
+
 
     public function store(Request $request)
     {
@@ -61,7 +61,7 @@ class ProjectController extends Controller
         $propertyDeedFile=$this->saveImage($request->property_deed,'images/user');
         $cleanRecordFile=$this->saveImage($request->clean_record,'images/user');
 
-        
+
         if ($validator->fails()) {
             return $this->apiResponse(null, $validator->errors(), 400);
         }
@@ -73,7 +73,7 @@ class ProjectController extends Controller
             $fileName = time() . '_' . $file->getClientOriginalName();
             $file->move(public_path('feasibility_study/Project'), $fileName);
         }
-      
+
 
 
         $projectData = [
@@ -99,11 +99,11 @@ class ProjectController extends Controller
               'personal_photo' => $personalPhotoFile,
               'property_deed' => $propertyDeedFile,
               'clean_record' =>  $cleanRecordFile,
-          
+
           ];
           $user->update($userData);
 
-              
+
         if ($project) {
             $interests = $request->interests;
             $project->interests()->attach($interests);
@@ -117,50 +117,6 @@ class ProjectController extends Controller
         return $this->apiResponse(null, 'لم يتم حفظ المشروع', 400);
     }
 
-
-
-//    public function store(Request $request)
-//    {
-//
-//        $input=$request->all();
-//        $validator = Validator::make( $input, [
-//            'description' => 'required',
-//            'feasibility_study' => 'required',
-//            'amount' => 'required',
-//            'location' => 'required',
-//            'type_id' => 'required',
-//            'interests' => 'required|array', // مصفوفة من الاهتمامات المختارة
-//        ]);
-//        if ($validator->fails()) {
-//            return $this->apiResponse(null, $validator->errors(), 400);
-//        }
-//
-//
-//        if ($request->hasFile('feasibility_study')) {
-//            $file = $request->file('feasibility_study');
-//            $fileName = time() . '_' . $file->getClientOriginalName();
-//            $file->move(public_path('feasibility_study/Project'), $fileName);
-//        }
-//
-//
-//        $Project = Project::query()->create([
-//            'description' => $request->description,
-//            'feasibility_study' => $fileName,
-//            'amount' => $request->amount,
-//            'location' => $request->location,
-//            'investor_id' => '1',
-//            'user_id' => Auth::id(),
-//            'type_id' => $request->type_id,
-//        ]);
-//        // ربط الاهتمامات بالمشروع
-//        $Project->interests()->sync($request->interests);
-//
-//        if ($Project) {
-//            return $this->apiResponse(new ProjectResource($Project), 'the Project save', 201);
-//        }
-//        return $this->apiResponse(null, 'the Project  not save', 400);
-//    }
-//
 
     public function show( $id)
     {
@@ -212,7 +168,7 @@ class ProjectController extends Controller
             $query->where("name", "LIKE", "%" . $name . "%")
                 ->orWhereRaw("SOUNDEX(name) = SOUNDEX('" . $name . "')");
         })->get();
-        
+
         if ($projects) {
             return $this->apiResponse($projects, 'ok', 200);
         }
@@ -228,18 +184,18 @@ class ProjectController extends Controller
 
 
 
-    
+
     public function acceptProject($id)
     {
         $project = Project::find($id);
-    
+
         if (!$project) {
             return response()->json(['message' => 'لم يتم العثور على المشروع.'], 404);
         }
-    
+
         $project->accept_status = 1;
         $project->save();
-    
+
         return response()->json(['message' => 'تم قبول المشروع بنجاح.']);
     }
 

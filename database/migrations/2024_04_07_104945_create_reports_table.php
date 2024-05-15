@@ -28,8 +28,7 @@ return new class extends Migration
             $table->decimal('صافي_الربح_الكلي', 10, 2)->nullable(false);
             $table->decimal('مبلغ_الصيانة', 10, 2)->nullable();
             $table->decimal('مبلغ_الأجور_والمعاملات', 10, 2)->nullable();
-            $table->text('التوصيات_الرئيسية')->nullable(false);
-            $table->text('الخطط_المستقبلية_لتحسين_الأداء')->nullable(false);
+            $table->text('التوصيات_الرئيسية')->nullable();
             $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
