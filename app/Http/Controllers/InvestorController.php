@@ -3,12 +3,9 @@
 namespace App\Http\Controllers;
 use App\Http\Resources\UserResource;
 use App\Models\Interest;
-<<<<<<< HEAD
 use App\Models\User;
-=======
 use App\Models\Project;
 use App\Http\Resources\ProjectResource;
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 use App\Traits\ApiResponseTrait;
 
 use App\Models\Investor;
@@ -41,10 +38,6 @@ class InvestorController extends Controller
      * Display the specified resource.
      */
     public function showMyProfile()
-<<<<<<< HEAD
-
-=======
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
     {
         $user = auth()->user();
     
@@ -74,12 +67,6 @@ class InvestorController extends Controller
 
 
     public function showProfileByAnother($id)
-<<<<<<< HEAD
-{
-    $investor = Investor::find($id);
-
-    if ($investor) {
-=======
     {
         $investor = Investor::find($id);
     
@@ -91,7 +78,6 @@ class InvestorController extends Controller
         $projects = Project::where('investor_id', $id)->get();
     
         // Prepare data to be returned
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
         $data = [
             'investor' => [
                 'first_name' => $investor->first_name,
@@ -133,24 +119,13 @@ class InvestorController extends Controller
 
         return $this->apiResponse($data, 'ok', 200);
     }
-<<<<<<< HEAD
-
-    return $this->apiResponse(null, 'The investor was not found', 404);
-}
 
 
 
-public function showForAdmin($id)
-{
-    $User = User::find($id);
-
-    if ($User) {
-        return $this->apiResponse(new UserResource($User), 'ok', 200);
-    }
-
-    return $this->apiResponse(null, 'The User was not found', 404);
-}
+  
 //user
+
+
     public function indexUser()
     {
         $User = UserResource::collection(User::get());
@@ -167,6 +142,7 @@ public function showForAdmin($id)
         $User->delete($id);
         return $this->apiResponse(null, 'This User deleted', 200);
     }
+
 
     public function showMyProfileUser()
 
@@ -187,9 +163,7 @@ public function showForAdmin($id)
         return $this->apiResponse(null ,'the User not found' ,404);
 
     }
-=======
     
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 
 
 
@@ -307,6 +281,9 @@ public function showForAdmin($id)
         $Investor->delete();
         return $this->apiResponse(null, 'This user deleted', 200);
     }
+
+
+    //user
     public function destroyUser(Request $request)
     {
         $email = $request->input('email');

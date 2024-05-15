@@ -12,14 +12,11 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-<<<<<<< HEAD
 Route::post('admin/login',[\App\Http\Controllers\PassportAuthController::class,'adminLogin'])->name('adminLogin');
-=======
 // Route::get('request_otp', 'API\AuthController@requestOtp');
 // Route::post('verify_otp', 'API\AuthController@verifyOtp');
 
 
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 
 Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:admin'] ],function() {
     // authenticated staff routes here
@@ -135,12 +132,6 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
         Route::get('Name/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByName']);
         Route::get('Amount/{id}', [\App\Http\Controllers\ProjectController::class, 'searchByAmount']);
 
-<<<<<<< HEAD
-
-    });
-    Route::prefix("reports")->group(function (){
-=======
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 
     });
 
@@ -149,12 +140,9 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     });
 
 
-<<<<<<< HEAD
 
 
 Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
-=======
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 
       //Project
       Route::prefix("projects")->group(function (){
@@ -163,11 +151,8 @@ Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
 });
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910
 Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
 
     //Investor
@@ -191,9 +176,7 @@ Route::group(['middleware' => ['auth:user-api,admin-api']], function () {
 });
 
 
-<<<<<<< HEAD
 });
-=======
 
 
 Route::post('admin/login',[\App\Http\Controllers\PassportAuthController::class,'adminLogin'])->name('adminLogin');
@@ -288,4 +271,3 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
 
     });
->>>>>>> cbaaa0d1eb35d4227caa64442f61c7c473c7b910

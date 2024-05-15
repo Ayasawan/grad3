@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Investor;
 use App\Models\Project;
 use App\Models\Report;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
 use App\Http\Resources\ReportResource;
@@ -61,8 +63,7 @@ class ReportController  extends Controller
             'صافي_الربح_الكلي' => 'required|numeric',
             'مبلغ_الصيانة' => 'nullable|numeric',
             'مبلغ_الأجور_والمعاملات' => 'nullable|numeric',
-            'التوصيات_الرئيسية' => 'required',
-            'الخطط_المستقبلية_لتحسين_الأداء' => 'required',
+            'التوصيات_الرئيسية' => 'nullable',
             'project_id' => 'required',
 
         ]);
@@ -98,7 +99,7 @@ class ReportController  extends Controller
             'مبلغ_الصيانة' => $request->مبلغ_الصيانة,
             'مبلغ_الأجور_والمعاملات' => $request->مبلغ_الأجور_والمعاملات,
             'التوصيات_الرئيسية' => $request->التوصيات_الرئيسية,
-            'الخطط_المستقبلية_لتحسين_الأداء' => $request->الخطط_المستقبلية_لتحسين_الأداء,
+            // 'الخطط_المستقبلية_لتحسين_الأداء' => $request->الخطط_المستقبلية_لتحسين_الأداء,
             'project_id' => $request->project_id,
             'user_id' => Auth::id(),
         ]);
@@ -109,7 +110,7 @@ class ReportController  extends Controller
 
         return $this->apiResponse(null, 'Failed to save the report', 400);
     }
-
+//admin
     public function show( $id)
     {
         $Report= Project::find($id);
@@ -118,53 +119,81 @@ class ReportController  extends Controller
         }
         return $this->apiResponse(null ,'the Report not found' ,404);
     }
+//مستثمر
+    public function investorReports($investor_id)
+    {
+        $investor = Investor::find($investor_id);
 
-//
-//    public function update(Request $request, $id)
-//    {
-//        $report = Report::find($id);
-//
-//        if (!$report) {
-//            return $this->apiResponse(null, 'The report was not found', 404);
-//        }
-//
-//        $project = $report->project;
-//
-//        if (!$project) {
-//            return $this->apiResponse(null, 'Project not found', 404);
-//        }
-//
-//        if ($project->user_id != Auth::id()) {
-//            return $this->apiResponse(null, 'You are not authorized to update this report', 403);
-//        }
-//
-//        $report->update($request->all());
-//
-//        return $this->apiResponse(new ReportResource($report), 'The report was updated successfully', 200);
-//    }
-//
-//    public function destroy($id)
-//    {
-//        $report = Report::find($id);
-//
-//        if (!$report) {
-//            return $this->apiResponse(null, 'The report was not found', 404);
-//        }
-//
-//        $project = $report->project;
-//
-//        if (!$project) {
-//            return $this->apiResponse(null, 'Project not found', 404);
-//        }
-//
-//        if ($project->user_id != Auth::id()) {
-//            return $this->apiResponse(null, 'You are not authorized to delete this report', 403);
-//        }
-//
-//        $report->delete();
-//
-//        return $this->apiResponse(null, 'The report was deleted successfully', 200);
-//    }
+        if (!$investor) {
+            return $this->apiResponse(null, 'Investor not found', 404);
+        }
 
+        $projects = $investor->projects()->with('reports')->get();
+
+        if ($projects->isEmpty()) {
+            return $this->apiResponse(null, 'No projects found for the investor', 404);
+        }
+
+        $projectReports = [];
+
+        foreach ($projects as $project) {
+            $projectReports[] = [
+                'project' => $project,
+                'reports' => ReportResource::collection($project->reports),
+            ];
+        }
+
+        return $this->apiResponse($projectReports, 'OK', 200);
+    }
+    public function showReports($user_id)
+    {
+        $user = User::find($user_id);
+
+        if (!$user) {
+            return $this->apiResponse(null, 'User not found', 404);
+        }
+
+        $projects = $user->projects()->with('reports')->get();
+
+        if ($projects->isEmpty()) {
+            return $this->apiResponse(null, 'No projects found for the user', 404);
+        }
+
+        $userReports = [];
+
+        foreach ($projects as $project) {
+            $userReports[] = [
+                'project' => $project,
+                'reports' => ReportResource::collection($project->reports),
+            ];
+        }
+
+        return $this->apiResponse($userReports, 'OK', 200);
+    }
+    public function specificProjectReport($investor_id, $project_id, $report_id)
+    {
+        $investor = Investor::find($investor_id);
+
+        if (!$investor) {
+            return $this->apiResponse(null, 'Investor not found', 404);
+        }
+
+        $project = $investor->projects()->find($project_id);
+
+        if (!$project) {
+            return $this->apiResponse(null, 'Project not found for the investor', 404);
+        }
+
+        $report = $project->reports()->find($report_id);
+
+        if (!$report) {
+            return $this->apiResponse(null, 'Report not found for the project', 404);
+        }
+
+        return $this->apiResponse(new ReportResource($report), 'OK', 200);
+    }
+    
+//Route::get('investors/{investor_id}/projects/{project_id}/reports/{report_id}', 'InvestorController@specificProjectReport');
+//Route::get('/users/{user_id}/reports', 'ProjectController@showReports');
+//Route::get('/investors/{investor_id}/reports', 'ReportController@investorReports');
 }
-
