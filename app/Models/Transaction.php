@@ -16,6 +16,7 @@ class Transaction extends Model
         'discount',
         'project_id',
         'user_id',
+        'description',
         'status'
     ];
 

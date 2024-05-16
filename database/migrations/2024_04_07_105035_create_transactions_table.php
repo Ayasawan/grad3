@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->text('description');
             $table->decimal('price', 8, 2);
             $table->string('discount', 10);
             $table->string('status')->default('Available');
