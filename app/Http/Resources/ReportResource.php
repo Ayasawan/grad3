@@ -14,11 +14,8 @@ class ReportResource extends JsonResource
      */
     public function toArray($request)
     {
-<<<<<<< HEAD
-=======
         return parent::toArray($request);
 
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
 
         return parent::toArray($request);
     }

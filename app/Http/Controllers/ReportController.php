@@ -1,10 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-<<<<<<< HEAD
-=======
-
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
 use App\Models\Investor;
 use App\Models\Project;
 use App\Models\Report;
@@ -141,121 +137,9 @@ class ReportController  extends Controller
     {
         $investor = Investor::find($investor_id);
 
-<<<<<<< HEAD
-    public function showReportsFor_investor(Request $request, $project_id)
-    {
-        $investor = auth()->user();
-
-        if (!$investor) {
-            return $this->apiResponse(null, 'User not authenticated', 401);
-        }
-
-        // الحصول على المشروع المطلوب
-        $project = Project::with('reports')->find($project_id);
-
-        if (!$project) {
-            return $this->apiResponse(null, 'Project not found', 404);
-        }
-
-        // التحقق مما إذا كان المستثمر يملك المشروع
-        if ($project->investor_id !== $investor->id) {
-            return $this->apiResponse(null, 'This project does not belong to the investor', 403);
-        }
-
-        // الحصول على التقارير المرتبطة بالمشروع
-        $reports = $project->reports;
-
-        return $this->apiResponse($reports, 'OK', 200);
-    }
-    public function showReportsFor_user(Request $request, $project_id)
-    {
-        $user = auth()->user();
-
-        if (!$user) {
-            return $this->apiResponse(null, 'User not authenticated', 401);
-        }
-
-        // الحصول على المشروع المطلوب
-        $project = Project::with('reports')->find($project_id);
-
-        if (!$project) {
-            return $this->apiResponse(null, 'Project not found', 404);
-        }
-
-        // التحقق مما إذا كان المستثمر يملك المشروع
-        if ($project->user_id !== $user->id) {
-            return $this->apiResponse(null, 'This project does not belong to the user', 403);
-        }
-
-        // الحصول على التقارير المرتبطة بالمشروع
-        $reports = $project->reports;
-
-        return $this->apiResponse($reports, 'OK', 200);
-    }
-
-
-    public function showReports($user_id)
-    {
-        $user = User::find($user_id);
-
-        if (!$user) {
-            return $this->apiResponse(null, 'User not found', 404);
-        }
-
-        $projects = $user->projects()->with('reports')->get();
-
-        if ($projects->isEmpty()) {
-            return $this->apiResponse(null, 'No projects found for the user', 404);
-        }
-
-        $userReports = [];
-
-        foreach ($projects as $project) {
-            $userReports[] = [
-                'project' => $project,
-                'reports' => ReportResource::collection($project->reports),
-            ];
-        }
-
-        return $this->apiResponse($userReports, 'OK', 200);
-    }
-
-    public function specificProjectReport($project_id, $report_id)
-    {
-        $user = auth()->user();
-
-        if (!$user) {
-            return $this->apiResponse(null, 'User not authenticated', 401);
-        }
-
-        $project = Project::where('id', $project_id)
-            ->where(function($query) use($user) {
-                $query->where('user_id', $user->id)
-                    ->orWhere('investor_id', $user->id);
-            })
-            ->first();
-
-        if (!$project) {
-            return $this->apiResponse(null, 'Project not found', 404);
-        }
-
-        $report = $project->reports()->find($report_id);
-
-        if (!$report) {
-            return $this->apiResponse(null, 'Report not found for the project', 404);
-        }
-
-        return $this->apiResponse(new ReportResource($report), 'OK', 200);
-    }
-
-//Route::get('investors/{investor_id}/projects/{project_id}/reports/{report_id}', 'InvestorController@specificProjectReport');
-//Route::get('/users/{user_id}/reports', 'ProjectController@showReports');
-//Route::get('/investors/{investor_id}/reports', 'ReportController@investorReports');
-=======
         if (!$investor) {
             return $this->apiResponse(null, 'Investor not found', 404);
         }
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
 
         $projects = $investor->projects()->with('reports')->get();
 

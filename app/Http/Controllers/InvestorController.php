@@ -27,8 +27,6 @@ class InvestorController extends Controller
     }
 
 
-<<<<<<< HEAD
-=======
     /**
      * Display the specified resource.
      */
@@ -58,7 +56,6 @@ class InvestorController extends Controller
         return $this->apiResponse($data, 'ok', 200);
     }
     
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
 
 
 
@@ -115,8 +112,6 @@ class InvestorController extends Controller
 
         return $this->apiResponse($data, 'ok', 200);
     }
-<<<<<<< HEAD
-=======
 
 
 
@@ -221,7 +216,6 @@ class InvestorController extends Controller
 //        return $this->apiResponse(null, 'This User deleted', 200);
 //    }
 
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
     /**
      * Update the specified resource in storage.
      */
@@ -273,8 +267,6 @@ class InvestorController extends Controller
         $Investor->delete();
         return $this->apiResponse(null, 'This user deleted', 200);
     }
-<<<<<<< HEAD
-=======
 
 
     //user
@@ -297,7 +289,6 @@ class InvestorController extends Controller
         $user->delete();
         return $this->apiResponse(null, 'This user deleted', 200);
     }
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
 
     public function addInterests(Request $request, $investorId)
     {

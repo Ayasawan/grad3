@@ -142,16 +142,7 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 
 
 
-<<<<<<< HEAD
-    Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
-
-        //Project
-        Route::prefix("projects")->group(function (){
-            Route::get('/',[\App\Http\Controllers\ProjectController::class,'indexPublic']);
-        });
-=======
 Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
 
     });
 
@@ -182,8 +173,6 @@ Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
 });
 
-<<<<<<< HEAD
-=======
 
 
 Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
@@ -209,9 +198,7 @@ Route::group(['middleware' => ['auth:user-api,admin-api']], function () {
 });
 
 
-});
 
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
 
 Route::post('admin/login',[\App\Http\Controllers\PassportAuthController::class,'adminLogin'])->name('adminLogin');
 
@@ -304,8 +291,4 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
 
 
-<<<<<<< HEAD
-});
-=======
     });
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3

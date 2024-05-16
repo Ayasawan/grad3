@@ -101,7 +101,8 @@ class ProjectController extends Controller
               'clean_record' =>  $cleanRecordFile,
 
           ];
-          $user->update($userData);
+        //   $user->update($userData);
+           $user->update($userData);
 
 
         if ($project) {
@@ -126,13 +127,6 @@ class ProjectController extends Controller
         }
         return $this->apiResponse(null ,'the Project not found' ,404);
     }
-
-
-
-
-
-
-
     public function update(Request $request,  $id)
     {
         $Project= Project::find($id);
@@ -202,4 +196,3 @@ class ProjectController extends Controller
 
 
 }
-
