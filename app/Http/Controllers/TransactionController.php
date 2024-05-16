@@ -184,5 +184,6 @@ class TransactionController  extends Controller
 
         return $this->apiResponse(TransactionResource::collection($transactions), 'User transactions retrieved successfully', 200);
     }
+
 }
 

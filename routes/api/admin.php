@@ -142,6 +142,12 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 
 
 
+    Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
+
+        //Project
+        Route::prefix("projects")->group(function (){
+            Route::get('/',[\App\Http\Controllers\ProjectController::class,'indexPublic']);
+        });
 Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
     });
@@ -172,7 +178,6 @@ Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
 
 });
-
 
 
 Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
@@ -291,4 +296,6 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
 
 
-    });
+});
+});
+

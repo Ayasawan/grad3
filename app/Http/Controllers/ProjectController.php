@@ -102,7 +102,7 @@ class ProjectController extends Controller
 
           ];
         //   $user->update($userData);
-           $user->update($userData);
+         $user->update($userData);
 
 
         if ($project) {

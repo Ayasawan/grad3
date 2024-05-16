@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 use App\Http\Resources\InvestorResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Hash;
-
+use Illuminate\Http\Response;
 
 class InvestorController extends Controller
 {
@@ -33,29 +33,28 @@ class InvestorController extends Controller
     public function showMyProfile()
     {
         $user = auth()->user();
-    
+
         if (!$user) {
             return response()->json("User not authenticated", 401);
         }
-    
+
         $investor = Investor::find($user->id);
-    
+
         if (!$investor) {
             return $this->apiResponse(null, 'Investor not found', 404);
         }
-    
+
         // Retrieve all projects associated with the investor
         $projects = Project::where('investor_id', $user->id)->get();
-    
+
         // Include investor information along with associated projects
         $data = [
             'investor' => new InvestorResource($investor),
             'projects' => ProjectResource::collection($projects)
         ];
-    
+
         return $this->apiResponse($data, 'ok', 200);
     }
-    
 
 
 
@@ -114,111 +113,6 @@ class InvestorController extends Controller
     }
 
 
-
-  
-//user
-
-
-    public function indexUser()
-    {
-        $User = UserResource::collection(User::get());
-        return $this->apiResponse($User, 'ok', 200);
-    }
-    public function destroyAdminUser( $id)
-    {
-        $User =  User::find($id);
-
-        if(!$User){
-            return $this->apiResponse(null, 'This User not found', 404);
-        }
-
-        $User->delete($id);
-        return $this->apiResponse(null, 'This User deleted', 200);
-    }
-
-
-    public function showMyProfileUser()
-
-    {
-        $user = auth()->user();
-
-        if (!$user) {
-            return response()->json ("User not authenticated", 401);
-        }
-        // $Investor= Investor::find($id);
-        $id =$user->id;
-
-        $User= User::find($id);
-
-        if($User){
-            return $this->apiResponse(new UserResource($User) , 'ok' ,200);
-        }
-        return $this->apiResponse(null ,'the User not found' ,404);
-
-    }
-    
-
-
-
-    public function showProfileByAnotherUser($id)
-    {
-        $User= User::find($id);
-
-        if ($User) {
-            $data = [
-                'first_name' => $User->first_name,
-                'last_name' => $User->last_name,
-                'user_type' => $User->user_type,
-                'location' => $User->location,
-            ];
-
-            return $this->apiResponse($data, 'ok', 200);
-        }
-
-        return $this->apiResponse(null, 'The investor was not found', 404);
-    }
-
-
-
-    public function showForAdminUser($id)
-    {
-        $User = User::find($id);
-
-        if ($User) {
-            return $this->apiResponse(new InvestorResource($User), 'ok', 200);
-        }
-
-        return $this->apiResponse(null, 'The User was not found', 404);
-    }
-    public function updateuser(Request $request,  $id)
-    {
-        $User= User::find($id);
-        if(!$User)
-        {
-            return $this->apiResponse(null ,'the User not found ',404);
-        }
-
-        $User->update($request->all());
-        if($User) {
-            return $this->apiResponse(new UserResource($User), 'the User update', 201);
-
-        }}
-//
-//    public function destroyAdminUser( $id)
-//    {
-//        $User =  User::find($id);
-//
-//        if(!$User){
-//            return $this->apiResponse(null, 'This User not found', 404);
-//        }
-//
-//        $User->delete($id);
-//        return $this->apiResponse(null, 'This User deleted', 200);
-//    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request,  $id)
     {
         $Investor= Investor::find($id);
@@ -269,35 +163,34 @@ class InvestorController extends Controller
     }
 
 
-    //user
-    public function destroyUser(Request $request)
-    {
-        $email = $request->input('email');
-        $password = $request->input('password');
+//    public function addInterests(Request $request, $investorId)
+//    {
+//        $validatedData = $request->validate([
+//            'interests' => 'required|array',
+//            'interests.*' => 'integer|exists:interests,id',
+//        ]);
+//
+//        $investor = Investor::find($investorId);
+//
+//        if (!$investor) {
+//            return response()->json(['message' => 'Investor not found'], 404);
+//        }
+//
+//        $investor->interests()->syncWithoutDetaching($validatedData['interests']);
+//
+//        $addedInterests = Interest::whereIn('id', $validatedData['interests'])->get();
+//
+//        return response()->json(['message' => 'Interests added successfully', 'interests' => $addedInterests], 200);
+//    }
 
-        $user = User::where('email', $email)->first();
-
-        if (!$user) {
-            return $this->apiResponse(null, 'This user not found', 404);
-        }
-
-        // قم بإجراء التحقق من صحة كلمة المرور
-        if (!Hash::check($password, $user->password)) {
-            return $this->apiResponse(null, 'Invalid password', 401);
-        }
-
-        $user->delete();
-        return $this->apiResponse(null, 'This user deleted', 200);
-    }
-
-    public function addInterests(Request $request, $investorId)
+    public function addInterests(Request $request)
     {
         $validatedData = $request->validate([
             'interests' => 'required|array',
             'interests.*' => 'integer|exists:interests,id',
         ]);
 
-        $investor = Investor::find($investorId);
+        $investor = auth()->user(); // المستثمر المصادق عليه
 
         if (!$investor) {
             return response()->json(['message' => 'Investor not found'], 404);
@@ -310,21 +203,24 @@ class InvestorController extends Controller
         return response()->json(['message' => 'Interests added successfully', 'interests' => $addedInterests], 200);
     }
 
+    public function getProjectsByInvestorInterests(Request $request)
+    {
+        $investor = auth()->user();
+
+        if (!$investor || $investor->interests()->count() === 0) {
+            return response()->json(['message' => 'User is not authenticated or not an investor'], Response::HTTP_UNAUTHORIZED);
+        }
 
 
+        $interestIds = $investor->interests->pluck('id')->toArray();
 
+        $projects = Project::whereHas('interests', function ($query) use ($interestIds) {
+            $query->whereIn('interests.id', $interestIds);
+        })->get();
 
-
-
-
-
-
-
-
-
-
-
-
+        return response()->json(['projects' => $projects], Response::HTTP_OK);
+    }
 }
+
 
 
