@@ -47,6 +47,7 @@ class TransactionController  extends Controller
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
+            'description' => 'required',
             'price' => 'required',
             'discount' => 'required',
             'project_id' => 'required',
@@ -68,6 +69,7 @@ class TransactionController  extends Controller
 
         $transaction = $project->transactions()->create([
             'name' => $request->name,
+            'description' => $request->description,
             'price' => $request->price,
             'discount' => $request->discount,
             'user_id' => $user->id,
