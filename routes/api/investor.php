@@ -29,8 +29,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
-
-Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
+//Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
 
 Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
 
@@ -47,13 +46,9 @@ Route::get('/{project_id}/specificProjectReport/{report_id}', [ReportController:
 });
 
 
-<<<<<<< HEAD
-=======
-
-Route::post('investor/{investorId}/interests', [InvestorController::class, 'addInterests']);
 
 
->>>>>>> 2d9358b838f2ee2adeaf83fe646b43e7f987f8b3
+
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
 Route::post('verify_otpInv',[\App\Http\Controllers\PassportAuthController::class,'verifyOtpInv']);
@@ -65,6 +60,8 @@ Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scope
     Route::get('logout',[PassportAuthController::class,'LogoutInvestor'])->name('LogoutInvestor');
 
     Route::get('/{project_id}/reports', [ReportController::class, 'showReportsFor_investor']);
+    Route::post('/interests', [InvestorController::class, 'addInterests']);
+    Route::get('/projects/investor-interests', [InvestorController::class, 'getProjectsByInvestorInterests']);
 
 
 //Complaint
