@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
@@ -94,6 +95,8 @@ class ProjectController extends Controller
 
           // Update user's record with uploaded images
           $user = auth()->user();
+          $user_id = $user->id;
+          $user1 =User::find($user_id);
           $userData = [
               'iD_card' => $IDCardFile,
               'personal_photo' => $personalPhotoFile,
@@ -101,8 +104,7 @@ class ProjectController extends Controller
               'clean_record' =>  $cleanRecordFile,
 
           ];
-        //   $user->update($userData);
-         $user->update($userData);
+          $user1->update($userData);
 
 
         if ($project) {
@@ -127,6 +129,13 @@ class ProjectController extends Controller
         }
         return $this->apiResponse(null ,'the Project not found' ,404);
     }
+
+
+
+
+
+
+
     public function update(Request $request,  $id)
     {
         $Project= Project::find($id);
@@ -196,3 +205,4 @@ class ProjectController extends Controller
 
 
 }
+
