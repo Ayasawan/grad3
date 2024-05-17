@@ -222,6 +222,13 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
     });
 
+    Route::prefix("users")->group(function () {
+
+        Route::get('/', [\App\Http\Controllers\UserController::class, 'indexUser']);
+        Route::get('showForAdmin/{id}', [\App\Http\Controllers\UserController::class, 'showForAdminUser']);
+        Route::post('delete/{id}', [\App\Http\Controllers\UserController::class, 'destroyAdminUser']);
+    });
+
 
 
     Route::prefix("Article")->group(function (){
