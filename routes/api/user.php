@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
-  return $request->user();
+    return $request->user();
 });
 
 // Route::get('sendWelcomeEmail',[\App\Http\Controllers\EmailController::class,'sendWelcomeEmail']);
@@ -33,7 +33,7 @@ Route::post('user/login', [PassportAuthController::class, 'userLogin'])->name('u
 
 
 Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user'] ],function(){
-   // authenticated staff routes here
+    // authenticated staff routes here
 
 //    Route::get('dashboard',[PassportAuthController::class, 'userDashboard']);
     Route::get('logout',[PassportAuthController::class,'logout'])->name('userLogout');
@@ -47,11 +47,11 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
 
     });
 
-  //Project
-  Route::prefix("projects")->group(function (){
-    Route::post('/',[\App\Http\Controllers\ProjectController::class,'store']);
-    Route::post('update/{id}',[\App\Http\Controllers\ProjectController::class,'update']);
-  });
+    //Project
+    Route::prefix("projects")->group(function (){
+        Route::post('/',[\App\Http\Controllers\ProjectController::class,'store']);
+        Route::post('update/{id}',[\App\Http\Controllers\ProjectController::class,'update']);
+    });
 
 
     Route::prefix('Transaction')->group(function () {

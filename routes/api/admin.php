@@ -143,13 +143,13 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 
 
 
-    Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
+Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 
-        //Project
-        Route::prefix("projects")->group(function (){
-            Route::get('/',[\App\Http\Controllers\ProjectController::class,'indexPublic']);
-        });
+    //Project
+    Route::prefix("projects")->group(function (){
+        Route::get('/',[\App\Http\Controllers\ProjectController::class,'indexPublic']);
     });
+});
 
 
 
@@ -161,7 +161,7 @@ Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
         Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
     });
 
-  });
+});
 
 
 Route::group(['middleware' => ['auth:user-api,admin-api']], function () {
@@ -221,13 +221,6 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
     });
 
-    Route::prefix("users")->group(function () {
-
-        Route::get('/', [\App\Http\Controllers\UserController::class, 'indexUser']);
-        Route::get('showForAdmin/{id}', [\App\Http\Controllers\UserController::class, 'showForAdminUser']);
-        Route::post('delete/{id}', [\App\Http\Controllers\UserController::class, 'destroyAdminUser']);
-    });
-
 
 
     Route::prefix("Article")->group(function (){
@@ -277,10 +270,10 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
     Route::prefix("users")->group(function () {
 
-    Route::get('/', [\App\Http\Controllers\UserController::class, 'indexUser']);
-    Route::get('showForAdmin/{id}', [\App\Http\Controllers\UserController::class, 'showForAdminUser']);
-    Route::post('delete/{id}', [\App\Http\Controllers\UserController::class, 'destroyAdmin']);
-});
+        Route::get('/', [\App\Http\Controllers\UserController::class, 'indexUser']);
+        Route::get('showForAdmin/{id}', [\App\Http\Controllers\UserController::class, 'showForAdminUser']);
+        Route::post('delete/{id}', [\App\Http\Controllers\UserController::class, 'destroyAdmin']);
+    });
 
 });
 

@@ -36,14 +36,14 @@ class ReportController  extends Controller
         return $this->apiResponse($reports, 'ok', 200);
     }
     public function userReports()
-   {
-    $userReports = Report::where('user_id', Auth::id())->get();
+    {
+        $userReports = Report::where('user_id', Auth::id())->get();
 
-    if ($userReports->isEmpty()) {
-        return $this->apiResponse(null, 'No reports found for the user', 404);
-    }
+        if ($userReports->isEmpty()) {
+            return $this->apiResponse(null, 'No reports found for the user', 404);
+        }
 
-    return $this->apiResponse(ReportResource::collection($userReports), 'OK', 200);
+        return $this->apiResponse(ReportResource::collection($userReports), 'OK', 200);
     }
 
     public function projectReports($project_id)
