@@ -142,5 +142,15 @@ class UserController extends Controller
         return $this->apiResponse(null, 'This user deleted', 200);
     }
 
+    public function destroyAdmin( $id)
+    {
+        $User =  User::find($id);
 
+        if(!$User){
+            return $this->apiResponse(null, 'This User not found', 404);
+        }
+
+        $User->delete($id);
+        return $this->apiResponse(null, 'This User deleted', 200);
+    }
 }

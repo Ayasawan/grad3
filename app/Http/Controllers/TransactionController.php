@@ -124,7 +124,8 @@ class TransactionController  extends Controller
     public function requestTransaction(Request $request, $id)
     {
         $user = Auth::user();
-
+        $user_id = $user->id;
+        $user1 =User::find($user_id);
         $transaction = Transaction::find($id);
 
         if (!$transaction) {
@@ -132,7 +133,7 @@ class TransactionController  extends Controller
         }
 
         // التحقق من أن المعاملة تنتمي إلى مشروع المستخدم الحالي
-        $project = $user->projects()->where('id', $transaction->project_id)->first();
+        $project = $user1->projects()->where('id', $transaction->project_id)->first();
 
         if (!$project) {
             return $this->apiResponse(null, 'Unauthorized', 401);

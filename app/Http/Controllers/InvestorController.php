@@ -192,12 +192,14 @@ class InvestorController extends Controller
         ]);
 
         $investor = auth()->user(); // المستثمر المصادق عليه
+        $investor_id = $investor->id;
+        $investor1 =Investor::find($investor_id);
 
-        if (!$investor) {
+        if (!$investor1) {
             return response()->json(['message' => 'Investor not found'], 404);
         }
 
-        $investor->interests()->syncWithoutDetaching($validatedData['interests']);
+        $investor1->interests()->syncWithoutDetaching($validatedData['interests']);
 
         $addedInterests = Interest::whereIn('id', $validatedData['interests'])->get();
 
@@ -207,13 +209,15 @@ class InvestorController extends Controller
     public function getProjectsByInvestorInterests(Request $request)
     {
         $investor = auth()->user();
+        $investor_id = $investor->id;
+        $investor1 =Investor::find($investor_id);
 
-        if (!$investor || $investor->interests()->count() === 0) {
+        if (!$investor1 || $investor1->interests()->count() === 0) {
             return response()->json(['message' => 'User is not authenticated or not an investor'], Response::HTTP_UNAUTHORIZED);
         }
 
 
-        $interestIds = $investor->interests->pluck('id')->toArray();
+        $interestIds = $investor1->interests->pluck('id')->toArray();
 
         $projects = Project::whereHas('interests', function ($query) use ($interestIds) {
             $query->whereIn('interests.id', $interestIds);

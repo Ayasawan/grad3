@@ -61,14 +61,11 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
 
     });
 //Report
-    Route::get('/{project_id}/reports', [ReportController::class, 'showReportsFor_user']);
 
     Route::prefix("reports")->group(function (){
         Route::get('/show',[\App\Http\Controllers\ReportController::class,'userReports']);
-//Route::get('/users/{user_id}/reports', 'ProjectController@showReports');
-
+        Route::get('/{project_id}/reports', [ReportController::class, 'showReportsFor_user']);
         Route::post('/',[\App\Http\Controllers\ReportController::class,'store']);
-        Route::get('/show',[\App\Http\Controllers\ReportController::class,'userReports']);
         Route::post('update/{id}',[\App\Http\Controllers\ReportController::class,'update']);
         Route::post('delete/{id}', [\App\Http\Controllers\ReportController::class, 'destroy']);
 

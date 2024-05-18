@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Project;
+use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
@@ -94,6 +95,8 @@ class ProjectController extends Controller
 
           // Update user's record with uploaded images
           $user = auth()->user();
+          $user_id = $user->id;
+          $user1 =User::find($user_id);
           $userData = [
               'iD_card' => $IDCardFile,
               'personal_photo' => $personalPhotoFile,
@@ -101,7 +104,7 @@ class ProjectController extends Controller
               'clean_record' =>  $cleanRecordFile,
 
           ];
-          $user->update($userData);
+          $user1->update($userData);
 
 
         if ($project) {
