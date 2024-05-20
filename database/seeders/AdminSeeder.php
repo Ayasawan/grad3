@@ -21,6 +21,7 @@ class AdminSeeder extends Seeder
                 'user_type' =>'admin',
                 'email' =>'abee@r.com',
                 'password'=>bcrypt('123123123'),
+                'bank_account_number' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
@@ -31,11 +32,13 @@ class AdminSeeder extends Seeder
                 'user_type' =>'admin',
                 'email' =>'aya@google.com',
                 'password'=>bcrypt('0932'),
+                'bank_account_number' => null,
                 'created_at' => now(),
                 'updated_at' => now(),
 
             ]
         ];
+
         Admin::insert($admins);
     }
 }

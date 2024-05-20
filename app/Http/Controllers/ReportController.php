@@ -18,22 +18,9 @@ class ReportController  extends Controller
 
     public function index()
     {
-        $projects = Report::with('project')->get();
+        $report =  ReportResource::collection(Report::get());
+        return $this->apiResponse($report, 'ok', 200);
 
-        if ($projects->isEmpty()) {
-            return $this->apiResponse(null, 'No projects found', 404);
-        }
-
-        $reports = [];
-        foreach ($projects as $project) {
-            $projectData = [
-                'report_data' => new ReportResource($project),
-
-            ];
-            $reports[] = $projectData;
-        }
-
-        return $this->apiResponse($reports, 'ok', 200);
     }
     public function userReports()
     {
@@ -61,24 +48,23 @@ class ReportController  extends Controller
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            'عنوان_التقرير' => 'required',
-            'ملخص_الأهداف_المحققة' => 'required',
-            'ملخص_الأهداف_غير_المحققة' => 'required',
-            'مبلغ_المستثمر' => 'required|numeric',
-            'الإيرادات_الإجمالية' => 'required|numeric',
-            'التكاليف_الإجمالية' => 'required|numeric',
-            'الأرباح_الصافية' => 'required|numeric',
-            'الصافي_الربح_لصاحب_العمل' => 'required|numeric',
-            'الصافي_الربح_للمستثمر' => 'required|numeric',
-            'المواد_المستلمة' => 'required',
-            'سعر_المواد' => 'required|numeric',
-            'إجمالي_المبيعات' => 'required|numeric',
-            'صافي_الربح_الكلي' => 'required|numeric',
-            'مبلغ_الصيانة' => 'nullable|numeric',
-            'مبلغ_الأجور_والمعاملات' => 'nullable|numeric',
-            'التوصيات_الرئيسية' => 'nullable',
+            'report_title' => 'required',
+            'achieved_goals_summary' => 'required',
+            'unachieved_goals_summary' => 'required',
+            'investor_amount' => 'required|numeric',
+            'total_revenue' => 'required|numeric',
+            'total_costs' => 'required|numeric',
+            'net_profit' => 'required|numeric',
+            'net_profit_employer' => 'required|numeric',
+            'net_profit_investor' => 'required|numeric',
+            'received_materials' => 'required',
+            'material_price' => 'required|numeric',
+            'total_sales' => 'required|numeric',
+            'overall_net_profit' => 'required|numeric',
+            'maintenance_amount' => 'nullable|numeric',
+            'wages_and_transactions_amount' => 'nullable|numeric',
+            'main_recommendations' => 'nullable',
             'project_id' => 'required',
-
         ]);
 
         if ($validator->fails()) {
@@ -96,23 +82,22 @@ class ReportController  extends Controller
         }
 
         $report = Report::query()->create([
-            'عنوان_التقرير' => $request->عنوان_التقرير,
-            'ملخص_الأهداف_المحققة' => $request->ملخص_الأهداف_المحققة,
-            'ملخص_الأهداف_غير_المحققة' => $request->ملخص_الأهداف_غير_المحققة,
-            'مبلغ_المستثمر' => $request->مبلغ_المستثمر,
-            'الإيرادات_الإجمالية' => $request->الإيرادات_الإجمالية,
-            'التكاليف_الإجمالية' => $request->التكاليف_الإجمالية,
-            'الأرباح_الصافية' => $request->الأرباح_الصافية,
-            'الصافي_الربح_لصاحب_العمل' => $request->الصافي_الربح_لصاحب_العمل,
-            'الصافي_الربح_للمستثمر' => $request->الصافي_الربح_للمستثمر,
-            'المواد_المستلمة' => $request->المواد_المستلمة,
-            'سعر_المواد' => $request->سعر_المواد,
-            'إجمالي_المبيعات' => $request->إجمالي_المبيعات,
-            'صافي_الربح_الكلي' => $request->صافي_الربح_الكلي,
-            'مبلغ_الصيانة' => $request->مبلغ_الصيانة,
-            'مبلغ_الأجور_والمعاملات' => $request->مبلغ_الأجور_والمعاملات,
-            'التوصيات_الرئيسية' => $request->التوصيات_الرئيسية,
-            // 'الخطط_المستقبلية_لتحسين_الأداء' => $request->الخطط_المستقبلية_لتحسين_الأداء,
+            'report_title' => $request->report_title,
+            'achieved_goals_summary' => $request->achieved_goals_summary,
+            'unachieved_goals_summary' => $request->unachieved_goals_summary,
+            'investor_amount' => $request->investor_amount,
+            'total_revenue' => $request->total_revenue,
+            'total_costs' => $request->total_costs,
+            'net_profit' => $request->net_profit,
+            'net_profit_employer' => $request->net_profit_employer,
+            'net_profit_investor' => $request->net_profit_investor,
+            'received_materials' => $request->received_materials,
+            'material_price' => $request->material_price,
+            'total_sales' => $request->total_sales,
+            'overall_net_profit' => $request->overall_net_profit,
+            'maintenance_amount' => $request->maintenance_amount,
+            'wages_and_transactions_amount' => $request->wages_and_transactions_amount,
+            'main_recommendations' => $request->main_recommendations,
             'project_id' => $request->project_id,
             'user_id' => Auth::id(),
         ]);

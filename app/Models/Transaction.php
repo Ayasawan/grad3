@@ -31,4 +31,9 @@ class Transaction extends Model
     public function user(){
         return $this->belongsTo(User::class,'user_id');
     }
+
+    public function Receipt(){
+        return $this->hasMany( Receipt::class,'transaction_id');
+    }
+
 }
