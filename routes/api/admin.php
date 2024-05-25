@@ -190,6 +190,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     Route::get('logout',[PassportAuthController::class,'adminlogout'])->name('adminLogout');
     Route::post('delete/{id}', [\App\Http\Controllers\PassportAuthController::class, 'destroy']);
 
+    Route::post('update-bank-account-number', [\App\Http\Controllers\PassportAuthController::class, 'updateAdminBankAccountNumber']);
 
 
     //Complaint

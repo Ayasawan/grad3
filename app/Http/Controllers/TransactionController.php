@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransactionResource;
+use App\Models\Admin;
 use App\Models\Project;
+use App\Models\Receipt;
 use App\Models\Report;
 use App\Models\User;
 use App\Models\Transaction;
@@ -31,19 +32,31 @@ class TransactionController  extends Controller
 
         $transactions = Transaction::where('project_id', $projectId)->get();
 
+        $data = [];
+        foreach ($transactions as $transaction) {
+            $receipt = Receipt::where('transaction_id', $transaction->id)->first();
+            $data[] = [
+                'transaction' => new TransactionResource($transaction),
+                'receipt' => $receipt ? $receipt->image : null,
+            ];
+        }
+
         return response()->json([
             'status' => 'success',
-            'data' => TransactionResource::collection($transactions),
-        ], 200);}
-
+            'data' => $data,
+        ], 200);
+    }
 
     public function index()
     {
         $Transaction =  TransactionResource::collection(Transaction::get());
         return $this->apiResponse($Transaction, 'ok', 200);
     }
+
     public function store(Request $request)
     {
+        $admin = Auth::user();
+
         $input = $request->all();
         $validator = Validator::make($input, [
             'name' => 'required',
@@ -77,7 +90,13 @@ class TransactionController  extends Controller
         ]);
 
         if ($transaction) {
-            return $this->apiResponse(new TransactionResource($transaction), 'The transaction saved', 201);
+            // استرداد رقم حساب البنك للمشرف
+            $adminBankAccountNumber = $admin->bank_account_number;
+
+            $transactionData = $transaction->toArray();
+            $transactionData['admin_bank_account_number'] = $adminBankAccountNumber;
+
+            return $this->apiResponse($transactionData, 'The transaction saved', 201);
         }
 
         return $this->apiResponse(null, 'Failed to save the transaction', 400);
@@ -120,43 +139,21 @@ class TransactionController  extends Controller
         return $this->apiResponse(null, 'This Transaction deleted', 200);
     }
 
-
-    public function requestTransaction(Request $request, $id)
-    {
-        $user = Auth::user();
-        $user_id = $user->id;
-        $user1 =User::find($user_id);
-        $transaction = Transaction::find($id);
-
-        if (!$transaction) {
-            return $this->apiResponse(null, 'Transaction not found', 404);
-        }
-
-        // التحقق من أن المعاملة تنتمي إلى مشروع المستخدم الحالي
-        $project = $user1->projects()->where('id', $transaction->project_id)->first();
-
-        if (!$project) {
-            return $this->apiResponse(null, 'Unauthorized', 401);
-        }
-
-        // قم بتحديث حالة المعاملة إلى "قيد المراجعة"
-        $transaction->status = 'pending'; // تعديل القيمة إلى "قيد المراجعة"
-        $transaction->save();
-
-        $statusMessage = 'Transaction requested successfully. Please wait for processing.';
-        if ($transaction->status === 'pending') {
-            $statusMessage = 'Transaction is already under processing.';
-        }
-        return $this->apiResponse(new TransactionResource($transaction), 'Transaction requested successfully', 200);
-    }
-
     public function reviewRequests()
     {
-        $reviewRequests = Transaction::where('status', 'pending')->get(); // تعديل القيمة إلى "قيد المراجعة"
+        $reviewRequests = Transaction::where('status', 'pending')->get();
 
-        return $this->apiResponse(TransactionResource::collection($reviewRequests), 'Review requests retrieved successfully', 200);
+        $data = [];
+        foreach ($reviewRequests as $reviewRequest) {
+            $receipt = Receipt::where('transaction_id', $reviewRequest->id)->first();
+            $data[] = [
+                'transaction' => new TransactionResource($reviewRequest),
+                'receipt' => $receipt ? $receipt->image : null,
+            ];
+        }
+
+        return $this->apiResponse($data, 'Review requests retrieved successfully', 200);
     }
-
     public function approveTransaction(Request $request, $id)
     {
         $transaction = Transaction::find($id);
@@ -171,22 +168,25 @@ class TransactionController  extends Controller
         return $this->apiResponse(new TransactionResource($transaction), 'Transaction approved successfully', 200);
     }
 
+
     public function showAcceptedTransactions()
     {
         $approvedTransactions = Transaction::where('status', 'approved')->get();
 
         return $this->apiResponse(TransactionResource::collection($approvedTransactions), 'Approved transactions retrieved successfully', 200);
     }
-    public function userTransactions()
-    {
-        $user = Auth::user();
 
-        $transactions = Transaction::whereHas('project', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->get();
 
-        return $this->apiResponse(TransactionResource::collection($transactions), 'User transactions retrieved successfully', 200);
-    }
+//    public function userTransactions()
+//    {
+//        $user = Auth::user();
+//
+//        $transactions = Transaction::whereHas('project', function ($query) use ($user) {
+//            $query->where('user_id', $user->id);
+//        })->get();
+//
+//        return $this->apiResponse(TransactionResource::collection($transactions), 'User transactions retrieved successfully', 200);
+//    }
 
 }
 

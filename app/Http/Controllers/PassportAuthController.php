@@ -32,29 +32,87 @@ class PassportAuthController extends Controller
 
 
     //Admin_auth
+//    public function adminLogin(Request $request)
+//    {
+//        $validator = Validator::make($request->all(), [
+//            'email' => 'required|email',
+//            'password' => 'required',
+//        ]);
+//        if($validator->fails()){
+//            $errors = $validator->errors()->all();
+//            return $this->apiResponse($errors, 'Validation Error', 422);
+//            // return response()->json(['error' => $validator->errors()->all()]);
+//        }
+//        if(auth()->guard('admin')->attempt(['email' => request('email'), 'password' => request('password')])){
+//            config(['auth.guards.api.provider' => 'admin']);
+//            $admin = Admin::select('admins.*')->find(auth()->guard('admin')->user()->id);
+//            $success =  $admin;
+//            $success['token'] =  $admin->createToken('MyApp',['admin'])->accessToken;
+//
+//            return $this->apiResponse($success, 'success', 200);
+//        }else{
+//            return $this->apiResponse(null, ['error' => ['Email and Password are Wrong.']], 200);
+//        }
+//    }
     public function adminLogin(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
-        if($validator->fails()){
+
+        if ($validator->fails()) {
             $errors = $validator->errors()->all();
             return $this->apiResponse($errors, 'Validation Error', 422);
-            // return response()->json(['error' => $validator->errors()->all()]);
         }
-        if(auth()->guard('admin')->attempt(['email' => request('email'), 'password' => request('password')])){
-            config(['auth.guards.api.provider' => 'admin']);
-            $admin = Admin::select('admins.*')->find(auth()->guard('admin')->user()->id);
-            $success =  $admin;
-            $success['token'] =  $admin->createToken('MyApp',['admin'])->accessToken;
 
-            return $this->apiResponse($success, 'success', 200);
-        }else{
+        $credentials = $request->only('email', 'password');
+
+        if (Auth::guard('admin')->attempt($credentials)) {
+            $admin = Auth::guard('admin')->user();
+            $admin->bank_account_number = $request->input('bank_account_number');
+            $admin->save();
+
+            $token = $admin->createToken('MyApp', ['admin'])->accessToken;
+
+            $data = [
+                'id' => $admin->id,
+                'first_name' => $admin->first_name,
+                'last_name' => $admin->last_name,
+                'user_type' => $admin->user_type,
+                'email' => $admin->email,
+                'created_at' => $admin->created_at,
+                'updated_at' => $admin->updated_at,
+                'token' => $token,
+            ];
+
+            return $this->apiResponse($data, 'success', 200);
+        } else {
             return $this->apiResponse(null, ['error' => ['Email and Password are Wrong.']], 200);
         }
     }
+    public function updateAdminBankAccountNumber(Request $request)
+    {
+        $admin = Auth::user();
 
+        $validator = Validator::make($request->all(), [
+            'bank_account_number' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return $this->apiResponse($errors, 'Validation Error', 422);
+        }
+
+        if (!$admin) {
+            return $this->apiResponse(null, ['error' => ['Admin not found.']], 404);
+        }
+
+        $admin->bank_account_number = $request->input('bank_account_number');
+        $admin->save();
+
+        return $this->apiResponse($admin, 'Bank account number updated successfully', 200);
+    }
     public function adminlogout(Request $request)
     {
         $token=$request->user()->token();
@@ -79,13 +137,13 @@ class PassportAuthController extends Controller
             'location' => ['required', 'string', 'max:255'],
             'device_token'=> ['required', 'string'],
         ]);
-    
+
         if ($validator->fails()) {
             return response(['errors' => $validator->errors()->all()], 401);
         }
-    
+
         $request['password'] = Hash::make($request['password']);
-    
+
         $user = User::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -101,7 +159,7 @@ class PassportAuthController extends Controller
             'property_deed' => null,
             'clean_record' => null,
         ]);
-    
+
         // if ($tokenResult = $user->createToken('Personal Access Token')) {
         //     $data["message"] = 'User successfully registered';
         //     $data["user_type"] = 'user';
@@ -116,18 +174,18 @@ class PassportAuthController extends Controller
             // $data["access_token"] = $tokenResult->accessToken;
             $data["OTP"]=$this->requestOtp($request,'User');
 
-     
+
             // $user->notify(new EmailVerificationNotification());
 
             return response()->json($data, Response::HTTP_OK);
         }
-    
+
         return response()->json(['error' => ['Email and Password are wrong.']], 401);
     }
 
 
 
-    
+
     public function userLogin(Request $request)
     {
 
@@ -143,7 +201,7 @@ class PassportAuthController extends Controller
         if(auth()->guard('user')->attempt(['email' => request('email'), 'password' => request('password')])){
 
             $user = User::where('email', request('email'))->first();
-        
+
             if ($user->verified) {
                 config(['auth.guards.api.provider' => 'user']);
 
@@ -159,7 +217,7 @@ class PassportAuthController extends Controller
             } else {
                 return response()->json(['error' => ['Email and Password are correct, but the account is not verified.']], 401);
             }
-            
+
         } else {
             return response()->json(['error' => ['Email and Password are wrong.']], 401);
         }
@@ -174,7 +232,7 @@ class PassportAuthController extends Controller
     }
 
 
-    
+
     public function destroy($id)
     {
         $res= User::find($id);
@@ -190,8 +248,8 @@ class PassportAuthController extends Controller
 
 
 
-    
-    
+
+
     ///Investor
     public function registerInvestor(Request $request)
     {
@@ -205,13 +263,13 @@ class PassportAuthController extends Controller
             'device_token'=> ['required', 'string'],
 
         ]);
-    
+
         if ($validator->fails()) {
             return response(['errors' => $validator->errors()->all()], 401);
         }
-    
+
         $request['password'] = Hash::make($request['password']);
-    
+
         $investor = Investor::create([
             'first_name' => $request->first_name,
             'last_name' => $request->last_name,
@@ -224,7 +282,7 @@ class PassportAuthController extends Controller
             'iD_card' => null,
             'personal_photo' => null,
         ]);
-    
+
         // if ($tokenResult = $investor->createToken('Personal Access Token')) {
         //     $data["message"] = 'Investor successfully registered';
         //     $data["user_type"] = 'investor';
@@ -238,10 +296,10 @@ class PassportAuthController extends Controller
             // $data["token_type"] = 'Bearer';
             // $data["access_token"] = $tokenResult->accessToken;
             $data["OTP"]=$this->requestOtp($request,'Investor');
-    
+
             return response()->json($data, Response::HTTP_OK);
         }
-    
+
         return response()->json(['error' => ['Email and Password are wrong.']], 401);
     }
 
@@ -264,7 +322,7 @@ class PassportAuthController extends Controller
         if(auth()->guard('investor')->attempt(['email' => request('email'), 'password' => request('password')])){
 
             $investor = Investor::where('email', request('email'))->first();
-        
+
             if ($investor->verified) {
                 config(['auth.guards.api.provider' => 'investor']);
                 $investor = Investor::select('investors.*')->find(auth()->guard('investor')->user()->id);
@@ -279,13 +337,13 @@ class PassportAuthController extends Controller
             } else {
                 return response()->json(['error' => ['Email and Password are correct, but the account is not verified.']], 401);
             }
-            
+
         } else {
             return response()->json(['error' => ['Email and Password are wrong.']], 401);
         }
     }
             // $investor = Investor::where('email', $request->email)->first();
-        
+
         // if ($investor) {
         //     if ($investor->otp !== null) { // تحقق من وجود قيمة فعلية في حقل "otp"
         //         if (auth()->guard('investor')->attempt(['email' => request('email'), 'password' => request('password')])) {
@@ -306,7 +364,7 @@ class PassportAuthController extends Controller
         // } else {
         //     return response()->json(['error' => ['investor not found.']], 404);
         // }
-    
+
 
 
 
@@ -331,7 +389,7 @@ public function sendWelcomeEmail()
 
     return "Email sent successfully!";
 }
-     
+
 public function requestOtp(Request $request, $modelName)
 {
     $otp = rand(1000, 9999);
@@ -358,20 +416,20 @@ public function requestOtp(Request $request, $modelName)
     public function verifyOtp(Request $request)
     {
         $user = User::where([['email', '=', $request->email], ['otp', '=', $request->otp]])->first();
-    
+
         if ($user) {
             $user->verified = true;
             $user->save();
             auth()->login($user);
-    
+
             $tokenResult = $user->createToken('Personal Access Token');
-    
+
             $data["message"] = 'User successfully registered';
             $data["user_type"] = 'user';
             $data["user"] = $user;
             $data["token_type"] = 'Bearer';
             $data["access_token"] = $tokenResult->accessToken;
-    
+
             return response()->json($data, 200);
         } else {
             return response()->json(['message' => 'Invalid'], 401);
@@ -381,20 +439,20 @@ public function requestOtp(Request $request, $modelName)
     public function verifyOtpInv(Request $request)
     {
         $investor = Investor::where([['email', '=', $request->email], ['otp', '=', $request->otp]])->first();
-    
+
         if ($investor) {
             $investor->verified = true;
             $investor->save();
             auth()->login($investor);
-    
+
             $tokenResult = $investor->createToken('Personal Access Token');
-    
+
             $data["message"] = 'User successfully registered';
             $data["user_type"] = 'user';
             $data["user"] = $investor;
             $data["token_type"] = 'Bearer';
             $data["access_token"] = $tokenResult->accessToken;
-    
+
             return response()->json($data, 200);
         } else {
             return response()->json(['message' => 'Invalid'], 401);

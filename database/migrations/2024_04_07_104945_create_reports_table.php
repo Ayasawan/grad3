@@ -6,34 +6,34 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-  
+
     public function up(): void
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string('عنوان_التقرير')->nullable(false);
-            $table->text('ملخص_الأهداف_المحققة')->nullable(false);
-            $table->text('ملخص_الأهداف_غير_المحققة')->nullable(false);
-            $table->decimal('مبلغ_المستثمر', 10, 2)->nullable(false);
-            $table->decimal('الإيرادات_الإجمالية', 10, 2)->nullable(false);
-            $table->decimal('التكاليف_الإجمالية', 10, 2)->nullable(false);
-            $table->decimal('الأرباح_الصافية', 10, 2)->nullable(false);
-            $table->decimal('الصافي_الربح_لصاحب_العمل', 10, 2)->nullable(false);
-            $table->decimal('الصافي_الربح_للمستثمر', 10, 2)->nullable(false);
-            $table->text('المواد_المستلمة')->nullable(false);
-            $table->decimal('سعر_المواد', 10, 2)->nullable(false);
-            $table->decimal('إجمالي_المبيعات', 10, 2)->nullable(false);
-            $table->decimal('صافي_الربح_الكلي', 10, 2)->nullable(false);
-            $table->decimal('مبلغ_الصيانة', 10, 2)->nullable();
-            $table->decimal('مبلغ_الأجور_والمعاملات', 10, 2)->nullable();
-            $table->text('التوصيات_الرئيسية')->nullable();
+            $table->string('report_title')->nullable(false);
+            $table->text('achieved_goals_summary')->nullable(false);
+            $table->text('unachieved_goals_summary')->nullable(false);
+            $table->decimal('investor_amount', 10, 2)->nullable(false);
+            $table->decimal('total_revenue', 10, 2)->nullable(false);
+            $table->decimal('total_costs', 10, 2)->nullable(false);
+            $table->decimal('net_profit', 10, 2)->nullable(false);
+            $table->decimal('net_profit_employer', 10, 2)->nullable(false);
+            $table->decimal('net_profit_investor', 10, 2)->nullable(false);
+            $table->text('received_materials')->nullable(false);
+            $table->decimal('material_price', 10, 2)->nullable(false);
+            $table->decimal('total_sales', 10, 2)->nullable(false);
+            $table->decimal('overall_net_profit', 10, 2)->nullable(false);
+            $table->decimal('maintenance_amount', 10, 2)->nullable();
+            $table->decimal('wages_and_transactions_amount', 10, 2)->nullable();
+            $table->text('main_recommendations')->nullable();
             $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
         });
     }
 
-  
+
     public function down(): void
     {
         Schema::dropIfExists('reports');
