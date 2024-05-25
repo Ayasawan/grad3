@@ -77,6 +77,7 @@ class PassportAuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
             'phone' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
+            'device_token'=> ['required', 'string'],
         ]);
     
         if ($validator->fails()) {
@@ -91,6 +92,7 @@ class PassportAuthController extends Controller
             'user_type' => 'user',
             'email' => $request->email,
             'otp' => null,
+            'device_token'=>$request->device_token,
             'password' => $request->password,
             'phone' => $request->phone,
             'location' => $request->location,
@@ -132,6 +134,7 @@ class PassportAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
+            'device_token'=>['required', 'string'],
         ]);
         if($validator->fails()){
             return response()->json(['error' => $validator->errors()->all()]);
@@ -148,6 +151,9 @@ class PassportAuthController extends Controller
                 $success =  $user;
                 $success["user_type"] = 'user ';
                 $success['token'] =  $user->createToken('MyApp',['user'])->accessToken;
+
+                // تحديث device_token
+                $user->update(['device_token' => $request->input('device_token')]);
 
                 return response()->json($success, 200);
             } else {
@@ -196,6 +202,8 @@ class PassportAuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
             'phone' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
+            'device_token'=> ['required', 'string'],
+
         ]);
     
         if ($validator->fails()) {
@@ -209,6 +217,7 @@ class PassportAuthController extends Controller
             'last_name' => $request->last_name,
             'user_type' => 'investor',
             'email' => $request->email,
+            'device_token'=>$request->device_token,
             'password' => $request->password,
             'phone' => $request->phone,
             'location' => $request->location,
@@ -245,6 +254,8 @@ class PassportAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
+            'device_token'=>['required', 'string'],
+
         ]);
 
         if($validator->fails()){
@@ -261,6 +272,9 @@ class PassportAuthController extends Controller
                 $success["user_type"] = 'investor ';
                 $success['token'] =  $investor->createToken('MyApp',['investor'])->accessToken;
 
+                // تحديث device_token
+                $investor->update(['device_token' => $request->input('device_token')]);
+                
                 return response()->json($success, 200);
             } else {
                 return response()->json(['error' => ['Email and Password are correct, but the account is not verified.']], 401);

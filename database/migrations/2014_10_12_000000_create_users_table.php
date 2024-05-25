@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->boolean('verified')->default(false);
             $table->string('otp')->nullable();
+            $table->string('device_token')->nullable();
             $table->string('password');
             $table->string('phone')->nullable();
             $table->text('location')->nullable();

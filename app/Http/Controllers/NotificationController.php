@@ -1,42 +1,24 @@
 <?php
 
-
-namespace App\Traits;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
-trait ApiResponseTrait
+
+class NotificationController extends Controller
 {
-    public function  apiResponse($data= null ,$message=null ,$status= null)
-    {
-        $array=[
-            'data'=> $data,
-            'message' =>$message,
-            'status' => $status,
-        ];
-        return response($array,$status);
-    }
-    // public function saveImage($photo,$folder){
-    //     $file_extension =$photo->getClientOriginalExtension();
-    //     $file_name =time().'.'.$file_extension;
-    //     $path = $folder;
-    //     $photo->move($path,$file_name);
-    //     return $file_name;
-
+    // $user = User::where('id', $request->id)->first();
+    // $notification_id = $user->device_token;
+    // $title="Greeting Notification";
+    // $body = "Have good day!";
+    // $id = $user->id;
+    // $type= "basic";
+    // $res = sendPushNotification ($title, $body, $notification_id);
+    // if ($res == 1){
+    // // success code
+    // }else{
+    // // fail code
     // }
-
-
-
-    public function saveImage($photo,$folder){
-        $file_extension =$photo->getClientOriginalExtension();
-        $file_name =time().'.'.$file_extension;
-        $path = $folder;
-        $photo->move($path,$file_name);
-        $fullImagePath = $file_name ? $folder . '/' . $file_name : null;
-        $host = $_SERVER['HTTP_HOST'];
-        $fullPath = 'http://' . $host . '/' . $fullImagePath;
-        return $fullPath;
-    }
 
 
   public function sendPushNotification($title, $body,$token)
@@ -75,44 +57,41 @@ trait ApiResponseTrait
 
 
 
-public function storeNotification(Request $request)
+public function saveToken(Request $request)
 {
-   
-    $user_type = $request->notifiable_type;
+    $user = auth()->user();
+    $user_id = $user->id;
+    $user1 =User::find($user_id);
 
-    if ($user_type === "investor") {
-        $investor = Investor::findOrFail($request->notifiable_id);
-        $investor->notifications()->create([
-            'notifiable_id' => $request->notifiable_id,
-            'notifiable_type' => "investor",
-            'title' => $request->title,
-            'body' => $request->body,
-        ]);
-    } elseif ($user_type === "user") {
-        $user = User::findOrFail($request->notifiable_id);
-        $user->notifications()->create([
-            'notifiable_id' => $request->notifiable_id,
-            'notifiable_type' => "user",
-            'title' => $request->title,
-            'body' => $request->body,
-        ]);
+    $user1->update(['device_token'=>$request->token]);
+    return response()->json(['token saved successfully.']);
+}
+
+
+
+public function notifyUser(Request $request){
+
+    $user = User::where('id', $request->id)->first();
+
+    $notification_id = $user->device_token;
+    $title = "Greeting Notification";
+    $body = "Have good day!";
+    // $id = $user->id;
+    // $type = "basic";
+
+    $res = $this->sendPushNotification( $title, $body, $notification_id);
+
+    if($res == 1){
+
+       // success code
+
+    }else{
+
+      // fail code
     }
 
-    return response()->json(null, 204);
-}
-    
 
- 
-
-// public function saveToken(Request $request)
-// {
-//     $user = auth()->user();
-//     $user_id = $user->id;
-//     $user1 =User::find($user_id);
-    
-//     $user1->update(['device_token'=>$request->token]);
-//     return response()->json(['token saved successfully.']);
-// }
+ }
 
 
 // public function sendPushNotification($title, $body,$token)
@@ -151,7 +130,5 @@ public function storeNotification(Request $request)
 
 //     return response()->json(['success' => true, 'response' => $response]);
 // }
-
-
 
 }

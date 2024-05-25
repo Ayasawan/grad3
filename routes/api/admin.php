@@ -12,6 +12,9 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+
+Route::post('/save-token', [App\Http\Controllers\NotificationController::class, 'saveToken'])->name('save-token');
+Route::post('/send-notification', [App\Http\Controllers\NotificationController::class, 'sendPushNotification'])->name('send.notification');
 // Route::post('admin/login',[\App\Http\Controllers\PassportAuthController::class,'adminLogin'])->name('adminLogin');
 // Route::get('request_otp', 'API\AuthController@requestOtp');
 // Route::post('verify_otp', 'API\AuthController@verifyOtp');

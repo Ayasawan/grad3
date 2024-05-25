@@ -16,7 +16,7 @@ class Investor extends Authenticatable
 
     protected $table = "investors";
 
-    protected $fillable = ['first_name','last_name','user_type','email','password','otp','phone','location','iD_card','personal_photo'];
+    protected $fillable = ['first_name','last_name','user_type','email','password','otp','device_token','phone','location','iD_card','personal_photo'];
 
     protected $primaryKey = "id";
     public $timestamps = true ;
@@ -37,6 +37,11 @@ class Investor extends Authenticatable
     public function evaluations()
     {
         return $this->morphMany(Evaluation::class, 'evaluable');
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
     }
 
 }
