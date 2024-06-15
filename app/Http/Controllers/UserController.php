@@ -42,7 +42,6 @@ class UserController extends Controller
         return $this->apiResponse($data, 'ok', 200);
     }
 
-
     public function showMyProfileUser()
     {
         $user = auth()->user();
@@ -52,19 +51,19 @@ class UserController extends Controller
         }
 
         $id = $user->id;
-        $userProjects = User::find($id)->projects;
+        $userProjects = User::with('projects')->find($id);
 
-        $investedProjects = $userProjects->where('investment_status', 1);
-        $pendingProjects = $userProjects->where('investment_status', 0);
+        $investedProjects = $userProjects->projects->where('investment_status', 1);
+        $pendingProjects = $userProjects->projects->where('investment_status', 0);
 
         $responseData = [
+            'user' => $user,
             'invested_projects' => $investedProjects,
             'pending_projects' => $pendingProjects,
         ];
 
         return $this->apiResponse($responseData, 'ok', 200);
     }
-
 
 
 

@@ -122,6 +122,7 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
         Route::get('/', [EvaluationController::class, 'index']);
         Route::post('/', [EvaluationController::class, 'store']);
         Route::post('delete', [EvaluationController::class, 'destroy']);
+        Route::get('all', [EvaluationController::class, 'getTotalEvaluationCount']);
     });
 
 
