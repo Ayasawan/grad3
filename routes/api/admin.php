@@ -4,6 +4,7 @@ use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\PassportAuthController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -278,6 +279,10 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
         Route::get('/', [\App\Http\Controllers\UserController::class, 'indexUser']);
         Route::get('showForAdmin/{id}', [\App\Http\Controllers\UserController::class, 'showForAdminUser']);
         Route::post('delete/{id}', [\App\Http\Controllers\UserController::class, 'destroyAdmin']);
+    });
+
+    Route::prefix('notification')->group(function () {
+        Route::post('/notify-user', [\App\Http\Controllers\NotificationController::class, 'notifyUser']);
     });
 
 });

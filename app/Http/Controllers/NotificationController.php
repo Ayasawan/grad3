@@ -68,34 +68,50 @@ public function saveToken(Request $request)
 }
 
 
-
 public function notifyUser(Request $request)
 {
-
     $validatedData = $request->validate([
-        'id' => 'required|exists:users,id',
+        'id' => 'required',
+        'type' => 'required|string|in:user,investor',
         'title' => 'required|string',
         'body' => 'required|string',
     ]);
 
-    $user = User::find($request->id);
-
-    if (!$user) {
-        return response()->json(['message' => 'User not found'], 404);
+    // تحديد نوع المستخدم والبحث عنه
+    if ($request->type === 'user') {
+        $notifiable = \App\Models\User::find($request->id);
+    } elseif ($request->type === 'investor') {
+        $notifiable = \App\Models\Investor::find($request->id);
+    } else {
+        return response()->json(['message' => 'Invalid notifiable type'], 400);
     }
 
-    $notification_id = $user->device_token;
+    if (!$notifiable) {
+        return response()->json(['message' => 'Notifiable entity not found'], 404);
+    }
+
+    $notification_id = $notifiable->device_token;
     $title = $request->title;
     $body = $request->body;
 
     $res = $this->sendPushNotification($title, $body, $notification_id);
 
+    // تخزين الإشعار في قاعدة البيانات باستخدام العلاقات
+    $notifiable->notifications()->create([
+        'notifiable_id' => $notifiable->id,
+        'notifiable_type' => $request->type,
+        'title' => $title,
+        'body' => $body,
+    ]);
+
     if ($res == 1) {
-        return response()->json(['message' => 'Notification sent successfully'], 200);
+        return response()->json(['message' => 'Notification sent and stored successfully'], 200);
     } else {
-        return response()->json(['message' => 'Failed to send notification'], 500);
+        return response()->json(['message' => 'Failed to send notification, but stored in database'], 500);
     }
 }
+
+
 
 
 
