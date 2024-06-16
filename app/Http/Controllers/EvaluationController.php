@@ -29,6 +29,8 @@ class EvaluationController extends Controller
     //     }
     //     return response()->json(null);
     // }
+
+
     // public function dislike($id)
     // {
     //     $project = Project::find($id);
@@ -142,5 +144,12 @@ public function store(Request $request, $id)
 
     return response()->json(null);
 }
+    public function getTotalEvaluationCount($id)
+    {
+        $project = Project::find($id);
+        $evaluations = $project->evaluations()->count();
+        return response()->json(['total_evaluation_count' => $evaluations]);
+    }
 }
+
 

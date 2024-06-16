@@ -175,7 +175,28 @@ class TransactionController  extends Controller
 
         return $this->apiResponse(TransactionResource::collection($approvedTransactions), 'Approved transactions retrieved successfully', 200);
     }
+    public function index_user()
+    {
+        $user = Auth::user();
 
+        // استرداد مشاريع المستخدم
+        $projects = $user->projects()->pluck('id');
+
+        // استرداد المعاملات المرتبطة بمشاريع المستخدم ذات الحالة "قيد المعالجة" أو "موافق عليها"
+        $transactions = Transaction::whereIn('project_id', $projects)
+            ->whereIn('status', ['pending', 'approved'])
+            ->get();
+
+        $data = [];
+        foreach ($transactions as $transaction) {
+            $data[] = new TransactionResource($transaction);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+        ], 200);
+    }
 
 //    public function userTransactions()
 //    {

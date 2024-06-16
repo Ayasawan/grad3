@@ -43,35 +43,18 @@ class ReportController  extends Controller
 
         return $this->apiResponse(ReportResource::collection($reports), 'OK', 200);
     }
-
-    public function store(Request $request)
+    public function store(Request $request, $projectId)
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            'report_title' => 'required',
-            'achieved_goals_summary' => 'required',
-            'unachieved_goals_summary' => 'required',
-            'investor_amount' => 'required|numeric',
-            'total_revenue' => 'required|numeric',
-            'total_costs' => 'required|numeric',
-            'net_profit' => 'required|numeric',
-            'net_profit_employer' => 'required|numeric',
-            'net_profit_investor' => 'required|numeric',
-            'received_materials' => 'required',
-            'material_price' => 'required|numeric',
-            'total_sales' => 'required|numeric',
-            'overall_net_profit' => 'required|numeric',
-            'maintenance_amount' => 'nullable|numeric',
-            'wages_and_transactions_amount' => 'nullable|numeric',
-            'main_recommendations' => 'nullable',
-            'project_id' => 'required',
+            // تفاصيل القواعد الخاصة بالتحقق من الحقول المطلوبة
         ]);
 
         if ($validator->fails()) {
             return $this->apiResponse(null, $validator->errors(), 400);
         }
 
-        $project = Project::find($request->project_id);
+        $project = Project::find($projectId);
 
         if (!$project) {
             return $this->apiResponse(null, 'Project not found', 404);
@@ -98,7 +81,7 @@ class ReportController  extends Controller
             'maintenance_amount' => $request->maintenance_amount,
             'wages_and_transactions_amount' => $request->wages_and_transactions_amount,
             'main_recommendations' => $request->main_recommendations,
-            'project_id' => $request->project_id,
+            'project_id' => $projectId,
             'user_id' => Auth::id(),
         ]);
 
