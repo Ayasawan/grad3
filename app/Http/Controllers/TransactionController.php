@@ -47,6 +47,8 @@ class TransactionController  extends Controller
         ], 200);
     }
 
+
+
     public function index()
     {
         $Transaction =  TransactionResource::collection(Transaction::get());
@@ -101,6 +103,9 @@ class TransactionController  extends Controller
 
         return $this->apiResponse(null, 'Failed to save the transaction', 400);
     }
+
+
+
     public function show( $id)
     {
         $Transaction= Transaction::find($id);
@@ -139,6 +144,8 @@ class TransactionController  extends Controller
         return $this->apiResponse(null, 'This Transaction deleted', 200);
     }
 
+
+
     public function reviewRequests()
     {
         $reviewRequests = Transaction::where('status', 'pending')->get();
@@ -154,6 +161,10 @@ class TransactionController  extends Controller
 
         return $this->apiResponse($data, 'Review requests retrieved successfully', 200);
     }
+
+
+
+
     public function approveTransaction(Request $request, $id)
     {
         $transaction = Transaction::find($id);
@@ -169,12 +180,20 @@ class TransactionController  extends Controller
     }
 
 
+
+
+
     public function showAcceptedTransactions()
     {
         $approvedTransactions = Transaction::where('status', 'approved')->get();
 
         return $this->apiResponse(TransactionResource::collection($approvedTransactions), 'Approved transactions retrieved successfully', 200);
     }
+
+
+
+
+    
     public function index_user()
     {
         $user = Auth::user();

@@ -69,29 +69,34 @@ public function saveToken(Request $request)
 
 
 
-public function notifyUser(Request $request){
+public function notifyUser(Request $request)
+{
 
-    $user = User::where('id', $request->id)->first();
+    $validatedData = $request->validate([
+        'id' => 'required|exists:users,id',
+        'title' => 'required|string',
+        'body' => 'required|string',
+    ]);
 
-    $notification_id = $user->device_token;
-    $title = "Greeting Notification";
-    $body = "Have good day!";
-    // $id = $user->id;
-    // $type = "basic";
+    $user = User::find($request->id);
 
-    $res = $this->sendPushNotification( $title, $body, $notification_id);
-
-    if($res == 1){
-
-       // success code
-
-    }else{
-
-      // fail code
+    if (!$user) {
+        return response()->json(['message' => 'User not found'], 404);
     }
 
+    $notification_id = $user->device_token;
+    $title = $request->title;
+    $body = $request->body;
 
- }
+    $res = $this->sendPushNotification($title, $body, $notification_id);
+
+    if ($res == 1) {
+        return response()->json(['message' => 'Notification sent successfully'], 200);
+    } else {
+        return response()->json(['message' => 'Failed to send notification'], 500);
+    }
+}
+
 
 
 // public function sendPushNotification($title, $body,$token)
