@@ -156,6 +156,12 @@ class PassportAuthController extends Controller
             // $data["access_token"] = $tokenResult->accessToken;
             $data["OTP"]=$this->requestOtp($request,'User');
 
+            // Send notification
+            $title = 'Welcome to Bloom App';
+            $body = 'Thank you for registering. Please check your email for verification.';
+            $this->sendNotificationAndStore($user->id, 'user', $title, $body);
+            
+
 
             // $user->notify(new EmailVerificationNotification());
 
@@ -186,14 +192,21 @@ class PassportAuthController extends Controller
 
             if ($user->verified) {
                 config(['auth.guards.api.provider' => 'user']);
-
                 $user = User::select('users.*')->find(auth()->guard('user')->user()->id);
+
+                // // تحديث device_token
+                $investor->device_token = $request->device_token;
+                $investor->save(); // تخزين النتائج في قاعدة البيانات
+     
                 $success =  $user;
                 $success["user_type"] = 'user ';
                 $success['token'] =  $user->createToken('MyApp',['user'])->accessToken;
 
-                // تحديث device_token
-                $user->update(['device_token' => $request->input('device_token')]);
+              
+                 // Send notification
+                 $title = 'Welcome to Bloom App';
+                 $body = "Hello, {$user->first_name}! Welcome to Our App again! We're glad to have you on board. If you have any questions or need assistance, feel free to contact our support team. Thank you for joining us!";;
+                 $this->sendNotificationAndStore($user->id, 'user', $title, $body);
 
                 return response()->json($success, 200);
             } else {
@@ -279,6 +292,17 @@ class PassportAuthController extends Controller
             // $data["access_token"] = $tokenResult->accessToken;
             $data["OTP"]=$this->requestOtp($request,'Investor');
 
+
+
+              // Send notification
+            $title = 'Welcome to Bloom App';
+            $body = 'Thank you for registering. Please check your email for verification.';
+            $notificationResponse = $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
+
+            if ($notificationResponse->getStatusCode() !== 200) {
+                return response()->json(['message' => 'Failed to send notification. Registration aborted.'], 500);
+            }
+
             return response()->json($data, Response::HTTP_OK);
         }
 
@@ -308,13 +332,23 @@ class PassportAuthController extends Controller
             if ($investor->verified) {
                 config(['auth.guards.api.provider' => 'investor']);
                 $investor = Investor::select('investors.*')->find(auth()->guard('investor')->user()->id);
+
+                 // // تحديث device_token
+                $investor->device_token = $request->device_token;
+                $investor->save(); // تخزين النتائج في قاعدة البيانات
+
                 $success =  $investor;
                 $success["user_type"] = 'investor ';
                 $success['token'] =  $investor->createToken('MyApp',['investor'])->accessToken;
 
-                // تحديث device_token
-                $investor->update(['device_token' => $request->input('device_token')]);
+              
                 
+
+                    // Send notification
+                $title = 'Welcome to Bloom App';
+                $body = "Hello, {$investor->first_name}! Welcome to Our App again! We're glad to have you on board. If you have any questions or need assistance, feel free to contact our support team. Thank you for joining us!";;
+                $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
+
                 return response()->json($success, 200);
             } else {
                 return response()->json(['error' => ['Email and Password are correct, but the account is not verified.']], 401);

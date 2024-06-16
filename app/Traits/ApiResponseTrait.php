@@ -5,6 +5,8 @@ namespace App\Traits;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Investor;
+
 trait ApiResponseTrait
 {
     public function  apiResponse($data= null ,$message=null ,$status= null)
@@ -72,34 +74,72 @@ trait ApiResponseTrait
     return response()->json(['success' => true, 'response' => $response]);
 }
 
-
-
-
-public function storeNotification(Request $request)
+public function sendNotificationAndStore($id, string $user_type, string $title, string $body)
 {
-   
-    $user_type = $request->notifiable_type;
+    try {
+        // Send push notification based on user type
+        if ($user_type === "user") {
+            $user = User::find($id);
+        } elseif ($user_type === "investor") {
+            $user = Investor::find($id);
+        } else {
+            return response()->json(['message' => 'Invalid user type'], 400);
+        }
 
-    if ($user_type === "investor") {
-        $investor = Investor::findOrFail($request->notifiable_id);
-        $investor->notifications()->create([
-            'notifiable_id' => $request->notifiable_id,
-            'notifiable_type' => "investor",
-            'title' => $request->title,
-            'body' => $request->body,
-        ]);
-    } elseif ($user_type === "user") {
-        $user = User::findOrFail($request->notifiable_id);
-        $user->notifications()->create([
-            'notifiable_id' => $request->notifiable_id,
-            'notifiable_type' => "user",
-            'title' => $request->title,
-            'body' => $request->body,
-        ]);
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+
+        $notification_id = $user->device_token;
+        $response = $this->sendPushNotification($title, $body, $notification_id);
+
+        // Check if notification was successfully sent
+        if ($response->getStatusCode() === 200) {
+            // Store the notification in the database
+            $notification = $user->notifications()->create([
+                'notifiable_id' => $user->id,
+                'notifiable_type' => $user_type,
+                'title' => $title,
+                'body' => $body,
+            ]);
+
+            return response()->json(['message' => 'Notification sent and stored successfully', 'notification' => $notification], 200);
+        } else {
+            return response()->json(['message' => 'Failed to send notification and store in database'], 500);
+        }
+    } catch (\Exception $e) {
+        // Handle any exceptions
+        \Log::error('Error sending and storing notification: ' . $e->getMessage());
+        return response()->json(['message' => 'Unexpected error'], 500);
     }
-
-    return response()->json(null, 204);
 }
+
+
+// public function storeNotification(Request $request)
+// {
+   
+//     $user_type = $request->notifiable_type;
+
+//     if ($user_type === "investor") {
+//         $investor = Investor::findOrFail($request->notifiable_id);
+//         $investor->notifications()->create([
+//             'notifiable_id' => $request->notifiable_id,
+//             'notifiable_type' => "investor",
+//             'title' => $request->title,
+//             'body' => $request->body,
+//         ]);
+//     } elseif ($user_type === "user") {
+//         $user = User::findOrFail($request->notifiable_id);
+//         $user->notifications()->create([
+//             'notifiable_id' => $request->notifiable_id,
+//             'notifiable_type' => "user",
+//             'title' => $request->title,
+//             'body' => $request->body,
+//         ]);
+//     }
+
+//     return response()->json(null, 204);
+// }
     
 
  
