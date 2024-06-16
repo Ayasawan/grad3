@@ -150,7 +150,7 @@ class PassportAuthController extends Controller
             'user_type' => 'user',
             'email' => $request->email,
             'otp' => null,
-            'device_token'=>$request->device_token,
+            // 'device_token'=>$request->device_token,
             'password' => $request->password,
             'phone' => $request->phone,
             'location' => $request->location,
@@ -192,7 +192,7 @@ class PassportAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
-            'device_token'=>['required', 'string'],
+            // 'device_token'=>['required', 'string'],
         ]);
         if($validator->fails()){
             return response()->json(['error' => $validator->errors()->all()]);
@@ -260,7 +260,7 @@ class PassportAuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
             'phone' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
-            'device_token'=> ['required', 'string'],
+            // 'device_token'=> ['required', 'string'],
 
         ]);
 
@@ -275,7 +275,7 @@ class PassportAuthController extends Controller
             'last_name' => $request->last_name,
             'user_type' => 'investor',
             'email' => $request->email,
-            'device_token'=>$request->device_token,
+            // 'device_token'=>$request->device_token,
             'password' => $request->password,
             'phone' => $request->phone,
             'location' => $request->location,
