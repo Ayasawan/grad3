@@ -69,6 +69,11 @@ class ReceiptController extends Controller
             'image' => $file_name,
         ]);
 
+        //notification
+        $title = 'تم الدفع بنجاح للمعاملة';
+        $body = "عزيزي/عزيزتي {$user->first_name}، نود إعلامك بأنه تم الدفع بنجاح للمعاملة الخاصة بك. سيتم معالجة المعاملة في أقرب وقت ممكن. سنقوم بإشعارك بأي تحديثات إضافية.";
+        $this->sendNotificationAndStore($user->id, 'user', $title, $body);
+
         return $this->apiResponse(new TransactionResource($transaction), $statusMessage, 200);
     }
 

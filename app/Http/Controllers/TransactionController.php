@@ -19,6 +19,8 @@ class TransactionController  extends Controller
 {
     use  ApiResponseTrait;
 
+
+    //admin_user
     public function indexx($projectId)
     {
         $project = Project::find($projectId);
@@ -55,6 +57,8 @@ class TransactionController  extends Controller
         return $this->apiResponse($Transaction, 'ok', 200);
     }
 
+
+    //
     public function store(Request $request)
     {
         $admin = Auth::user();
@@ -98,6 +102,13 @@ class TransactionController  extends Controller
             $transactionData = $transaction->toArray();
             $transactionData['admin_bank_account_number'] = $adminBankAccountNumber;
 
+
+            //notification
+            $title = 'معاملة جديدة لمشروعك';
+            $body = "عزيزي/عزيزتي {$user->first_name}، نود إعلامك بأنه تمت إضافة معاملة جديدة لمشروعك {$project->name}. يمكنك الآن طلب المعاملة الجديدة ومعالجتها. نرجو منك مراجعة التفاصيل واتخاذ الإجراءات اللازمة. .";
+            $this->sendNotificationAndStore($project->user->id, 'user', $title, $body);
+
+
             return $this->apiResponse($transactionData, 'The transaction saved', 201);
         }
 
@@ -105,7 +116,7 @@ class TransactionController  extends Controller
     }
 
 
-
+//ADMIN_user
     public function show( $id)
     {
         $Transaction= Transaction::find($id);
@@ -116,6 +127,8 @@ class TransactionController  extends Controller
     }
 
 
+
+    //admin
     public function update(Request $request,  $id)
     {
         $Transaction= Transaction::find($id);
@@ -131,7 +144,7 @@ class TransactionController  extends Controller
         }
     }
 
-
+//admin
     public function destroy( $id)
     {
         $Transaction = Transaction::find($id);
@@ -145,7 +158,7 @@ class TransactionController  extends Controller
     }
 
 
-
+//admin
     public function reviewRequests()
     {
         $reviewRequests = Transaction::where('status', 'pending')->get();
@@ -164,7 +177,7 @@ class TransactionController  extends Controller
 
 
 
-
+//admin
     public function approveTransaction(Request $request, $id)
     {
         $transaction = Transaction::find($id);
@@ -182,7 +195,7 @@ class TransactionController  extends Controller
 
 
 
-
+//admin
     public function showAcceptedTransactions()
     {
         $approvedTransactions = Transaction::where('status', 'approved')->get();
@@ -193,7 +206,8 @@ class TransactionController  extends Controller
 
 
 
-    
+    //user
+    //all_projects_with_all_transactions
     public function index_user()
     {
         $user = Auth::user();
@@ -217,16 +231,6 @@ class TransactionController  extends Controller
         ], 200);
     }
 
-//    public function userTransactions()
-//    {
-//        $user = Auth::user();
-//
-//        $transactions = Transaction::whereHas('project', function ($query) use ($user) {
-//            $query->where('user_id', $user->id);
-//        })->get();
-//
-//        return $this->apiResponse(TransactionResource::collection($transactions), 'User transactions retrieved successfully', 200);
-//    }
 
 }
 

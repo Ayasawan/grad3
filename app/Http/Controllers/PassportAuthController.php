@@ -157,13 +157,10 @@ class PassportAuthController extends Controller
             $data["OTP"]=$this->requestOtp($request,'User');
 
             // Send notification
-            $title = 'Welcome to Bloom App';
-            $body = 'Thank you for registering. Please check your email for verification.';
+            $title = 'مرحبًا بك في تطبيق Bloom';
+            $body = 'شكرًا لتسجيلك في تطبيق Bloom. نرجو منك التحقق من بريدك الإلكتروني لإتمام عملية التفعيل. نحن سعيدون بانضمامك إلينا!';
             $this->sendNotificationAndStore($user->id, 'user', $title, $body);
             
-
-
-            // $user->notify(new EmailVerificationNotification());
 
             return response()->json($data, Response::HTTP_OK);
         }
@@ -204,9 +201,9 @@ class PassportAuthController extends Controller
 
               
                  // Send notification
-                 $title = 'Welcome to Bloom App';
-                 $body = "Hello, {$user->first_name}! Welcome to Our App again! We're glad to have you on board. If you have any questions or need assistance, feel free to contact our support team. Thank you for joining us!";;
-                 $this->sendNotificationAndStore($user->id, 'user', $title, $body);
+                $title = 'مرحبًا بك في تطبيق Bloom';
+                $body = "مرحبًا، {$user->first_name}! يسعدنا أن نرحب بك مرة أخرى في تطبيق Bloom. نحن سعداء بانضمامك إلينا. إذا كان لديك أي استفسارات أو تحتاج إلى مساعدة، فلا تتردد في التواصل مع فريق الدعم الخاص بنا. شكرًا لانضمامك إلينا!";
+                $this->sendNotificationAndStore($user->id, 'user', $title, $body);
 
                 return response()->json($success, 200);
             } else {
@@ -295,9 +292,9 @@ class PassportAuthController extends Controller
 
 
               // Send notification
-            $title = 'Welcome to Bloom App';
-            $body = 'Thank you for registering. Please check your email for verification.';
-            $notificationResponse = $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
+              $title = 'مرحبًا بك في تطبيق Bloom';
+              $body = 'شكرًا لتسجيلك في تطبيق Bloom. نرجو منك التحقق من بريدك الإلكتروني لإتمام عملية التفعيل. نحن سعيدون بانضمامك إلينا!';
+              $this->sendNotificationAndStore($user->id, 'user', $title, $body);
 
             if ($notificationResponse->getStatusCode() !== 200) {
                 return response()->json(['message' => 'Failed to send notification. Registration aborted.'], 500);
@@ -342,12 +339,10 @@ class PassportAuthController extends Controller
                 $success['token'] =  $investor->createToken('MyApp',['investor'])->accessToken;
 
               
-                
-
-                    // Send notification
-                $title = 'Welcome to Bloom App';
-                $body = "Hello, {$investor->first_name}! Welcome to Our App again! We're glad to have you on board. If you have any questions or need assistance, feel free to contact our support team. Thank you for joining us!";;
-                $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
+               // Send notification
+               $title = 'مرحبًا بك في تطبيق Bloom';
+               $body = "مرحبًا، {$investor->first_name}! يسعدنا أن نرحب بك مرة أخرى في تطبيق Bloom. نحن سعداء بانضمامك إلينا. إذا كان لديك أي استفسارات أو تحتاج إلى مساعدة، فلا تتردد في التواصل مع فريق الدعم الخاص بنا. شكرًا لانضمامك إلينا!";
+               $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
 
                 return response()->json($success, 200);
             } else {
