@@ -16,6 +16,7 @@ class ComplaintController extends Controller
 {
     use  ApiResponseTrait;
 
+    //for_admin
     public function index()
     {
         $Complaint = ComplaintResource::collection(Complaint::get());
@@ -23,32 +24,44 @@ class ComplaintController extends Controller
     }
 
 
+
+     //for_investor
     public function store(Request $request)
     {
-        $input=$request->all();
-        $validator = Validator::make( $input, [
+        $input = $request->all();
+        $validator = Validator::make($input, [
             'description' => 'required',
             'project_id' => 'required',
-           
         ]);
+
         if ($validator->fails()) {
             return $this->apiResponse(null, $validator->errors(), 400);
         }
 
-        $Complaint = Complaint::query()->create([
+        $investor = Auth::user(); 
+
+        $complaint = Complaint::create([
             'description' => $request->description,
             'project_id' => $request->project_id,
-            'investor_id' => Auth::id(),  
+            'investor_id' => $investor->id,  
         ]);
 
+        if ($complaint) {
+            //notification
+            $title = 'تقديم شكوى';
+            $body = "عزيزي/عزيزتي {$investor->first_name}، تم تقديم شكواك بنجاح وسيتم معالجتها في أقرب وقت ممكن. سيتم إشعارك بأي تحديثات إضافية.";
+            $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
 
-        if ($Complaint) {
-            return $this->apiResponse(new ComplaintResource($Complaint), 'the Complaint  save', 201);
+            return $this->apiResponse(new ComplaintResource($complaint), 'تم حفظ الشكوى بنجاح', 201);
         }
-        return $this->apiResponse(null, 'the Complaint  not save', 400);
+
+        return $this->apiResponse(null, 'لم يتم حفظ الشكوى', 400);
     }
 
+
    
+
+    //for_admin
     public function show( $id)
     {
         $Complaint= Complaint::find($id);
@@ -75,7 +88,7 @@ class ComplaintController extends Controller
         }
     }
 
-   
+   //for_admin
     public function destroyAdmin( $id)
     {
         $complaint =  Complaint::find($id);
@@ -87,6 +100,8 @@ class ComplaintController extends Controller
         $complaint->delete($id);
             return $this->apiResponse(null, 'This complaint deleted', 200);
     }
+
+
 
 
     public function destroyInvestor($id)

@@ -74,6 +74,9 @@ trait ApiResponseTrait
     return response()->json(['success' => true, 'response' => $response]);
 }
 
+
+
+
 public function sendNotificationAndStore($id, string $user_type, string $title, string $body)
 {
     try {

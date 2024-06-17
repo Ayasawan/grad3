@@ -28,32 +28,24 @@ class InvestorController extends Controller
 
 
 
-    /**
-     * Display the specified resource.
-     */
+
     public function showMyProfile()
     {
         $user = auth()->user();
-
         if (!$user) {
             return response()->json("User not authenticated", 401);
         }
-
         $investor = Investor::find($user->id);
-
         if (!$investor) {
             return $this->apiResponse(null, 'Investor not found', 404);
         }
 
-        // Retrieve all projects associated with the investor
         $projects = Project::where('investor_id', $user->id)->get();
 
-        // Include investor information along with associated projects
         $data = [
             'investor' => new InvestorResource($investor),
             'projects' => ProjectResource::collection($projects)
         ];
-
         return $this->apiResponse($data, 'ok', 200);
     }
 
@@ -62,15 +54,11 @@ class InvestorController extends Controller
     public function showProfileByAnother($id)
     {
         $investor = Investor::find($id);
-
         if (!$investor) {
             return $this->apiResponse(null, 'The investor was not found', 404);
         }
-
-        // Retrieve all projects associated with the investor
         $projects = Project::where('investor_id', $id)->get();
 
-        // Prepare data to be returned
         $data = [
             'investor' => [
                 'first_name' => $investor->first_name,
@@ -162,27 +150,10 @@ class InvestorController extends Controller
         $Investor->delete();
         return $this->apiResponse(null, 'This user deleted', 200);
     }
+/////////////////////////////////////////////////////////////
 
 
-//    public function addInterests(Request $request, $investorId)
-//    {
-//        $validatedData = $request->validate([
-//            'interests' => 'required|array',
-//            'interests.*' => 'integer|exists:interests,id',
-//        ]);
-//
-//        $investor = Investor::find($investorId);
-//
-//        if (!$investor) {
-//            return response()->json(['message' => 'Investor not found'], 404);
-//        }
-//
-//        $investor->interests()->syncWithoutDetaching($validatedData['interests']);
-//
-//        $addedInterests = Interest::whereIn('id', $validatedData['interests'])->get();
-//
-//        return response()->json(['message' => 'Interests added successfully', 'interests' => $addedInterests], 200);
-//    }
+
 
     public function addInterests(Request $request)
     {

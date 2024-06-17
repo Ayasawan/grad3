@@ -20,5 +20,9 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call(AdminSeeder::class);
         $this->call(investorSeeder::class);
+        $this->call(InterestSeeder::class);
+        $this->call(TypeSeeder::class);
+
+
     }
 }
