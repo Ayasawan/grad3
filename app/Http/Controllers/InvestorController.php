@@ -7,7 +7,6 @@ use App\Models\User;
 use App\Models\Project;
 use App\Http\Resources\ProjectResource;
 use App\Traits\ApiResponseTrait;
-
 use App\Models\Investor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -15,7 +14,6 @@ use App\Http\Resources\InvestorResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Response;
-
 class InvestorController extends Controller
 {
     use ApiResponseTrait;
@@ -26,11 +24,6 @@ class InvestorController extends Controller
         return $this->apiResponse($Investor, 'ok', 200);
     }
 
-
-
-    /**
-     * Display the specified resource.
-     */
     public function showMyProfile()
     {
         $user = auth()->user();
@@ -163,68 +156,6 @@ class InvestorController extends Controller
         return $this->apiResponse(null, 'This user deleted', 200);
     }
 
-
-//    public function addInterests(Request $request, $investorId)
-//    {
-//        $validatedData = $request->validate([
-//            'interests' => 'required|array',
-//            'interests.*' => 'integer|exists:interests,id',
-//        ]);
-//
-//        $investor = Investor::find($investorId);
-//
-//        if (!$investor) {
-//            return response()->json(['message' => 'Investor not found'], 404);
-//        }
-//
-//        $investor->interests()->syncWithoutDetaching($validatedData['interests']);
-//
-//        $addedInterests = Interest::whereIn('id', $validatedData['interests'])->get();
-//
-//        return response()->json(['message' => 'Interests added successfully', 'interests' => $addedInterests], 200);
-//    }
-
-    public function addInterests(Request $request)
-    {
-        $validatedData = $request->validate([
-            'interests' => 'required|array',
-            'interests.*' => 'integer|exists:interests,id',
-        ]);
-
-        $investor = auth()->user(); // المستثمر المصادق عليه
-        $investor_id = $investor->id;
-        $investor1 =Investor::find($investor_id);
-
-        if (!$investor1) {
-            return response()->json(['message' => 'Investor not found'], 404);
-        }
-
-        $investor1->interests()->syncWithoutDetaching($validatedData['interests']);
-
-        $addedInterests = Interest::whereIn('id', $validatedData['interests'])->get();
-
-        return response()->json(['message' => 'Interests added successfully', 'interests' => $addedInterests], 200);
-    }
-
-    public function getProjectsByInvestorInterests(Request $request)
-    {
-        $investor = auth()->user();
-        $investor_id = $investor->id;
-        $investor1 =Investor::find($investor_id);
-
-        if (!$investor1 || $investor1->interests()->count() === 0) {
-            return response()->json(['message' => 'User is not authenticated or not an investor'], Response::HTTP_UNAUTHORIZED);
-        }
-
-
-        $interestIds = $investor1->interests->pluck('id')->toArray();
-
-        $projects = Project::whereHas('interests', function ($query) use ($interestIds) {
-            $query->whereIn('interests.id', $interestIds);
-        })->get();
-
-        return response()->json(['projects' => $projects], Response::HTTP_OK);
-    }
 }
 
 

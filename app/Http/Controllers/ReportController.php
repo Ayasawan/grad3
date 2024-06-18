@@ -43,11 +43,11 @@ class ReportController  extends Controller
 
         return $this->apiResponse(ReportResource::collection($reports), 'OK', 200);
     }
+
     public function store(Request $request, $projectId)
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-            // تفاصيل القواعد الخاصة بالتحقق من الحقول المطلوبة
         ]);
 
         if ($validator->fails()) {
@@ -91,6 +91,7 @@ class ReportController  extends Controller
 
         return $this->apiResponse(null, 'Failed to save the report', 400);
     }
+
 //admin
     public function show( $id)
     {
