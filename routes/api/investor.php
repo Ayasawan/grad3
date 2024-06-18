@@ -31,24 +31,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 
 
-Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
-
-Route::get('/{project_id}/specificProjectReport/{report_id}', [ReportController::class, 'specificProjectReport']);
-
-    //Investor
-    Route::prefix("investors")->group(function (){
-        Route::get('/{id}',[\App\Http\Controllers\InvestorController::class,'showProfileByAnother']);
-    });
-    Route::prefix("users")->group(function (){
-        Route::get('/{id}',[\App\Http\Controllers\UserController::class,'showProfileByAnotherUser']);
-    });
-
-});
-
-
-
-
-
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
 Route::post('verify_otpInv',[\App\Http\Controllers\PassportAuthController::class,'verifyOtpInv']);

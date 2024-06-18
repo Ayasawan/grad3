@@ -16,12 +16,15 @@ class ReportController  extends Controller
 {
     use  ApiResponseTrait;
 
+    //FOr_admin
     public function index()
     {
         $report =  ReportResource::collection(Report::get());
         return $this->apiResponse($report, 'ok', 200);
 
     }
+
+    //for_user
     public function userReports()
     {
         $userReports = Report::where('user_id', Auth::id())->get();
@@ -33,6 +36,8 @@ class ReportController  extends Controller
         return $this->apiResponse(ReportResource::collection($userReports), 'OK', 200);
     }
 
+
+    //for_project
     public function projectReports($project_id)
     {
         $reports = Report::where('project_id', $project_id)->get();
@@ -44,10 +49,14 @@ class ReportController  extends Controller
         return $this->apiResponse(ReportResource::collection($reports), 'OK', 200);
     }
 
+
+    //for_user
+
     public function store(Request $request, $projectId)
     {
         $input = $request->all();
         $validator = Validator::make($input, [
+
         ]);
 
         if ($validator->fails()) {
@@ -85,12 +94,20 @@ class ReportController  extends Controller
             'user_id' => Auth::id(),
         ]);
 
+        $investor = Investor::find($project->investor_id);
+
         if ($report) {
+           //notification
+           $title = 'تقرير جديد';
+           $body = "عزيزي/عزيزتي {$investor->first_name}، نود إعلامك بأنه تمت إضافة تقرير جديد للمشروع {$project->name} الذي قمت بالاستثمار فيه. يرجى مراجعة التقرير لمعرفة تفاصيل المشروع والتحديثات الجديدة. شكرًا لاستثمارك وثقتك فينا.";
+           $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
+
             return $this->apiResponse(new ReportResource($report), 'The report was saved successfully', 201);
         }
 
         return $this->apiResponse(null, 'Failed to save the report', 400);
     }
+
 
 //admin
     public function show( $id)
@@ -101,7 +118,10 @@ class ReportController  extends Controller
         }
         return $this->apiResponse(null ,'the Report not found' ,404);
     }
-//مستثمر
+
+
+
+//investor
     public function showReportsFor_investor(Request $request, $project_id)
     {
         $investor = auth()->user();
@@ -128,6 +148,9 @@ class ReportController  extends Controller
         return $this->apiResponse($reports, 'OK', 200);
     }
 
+
+
+//user
     public function showReportsFor_user(Request $request, $project_id)
     {
         $user = auth()->user();
@@ -155,6 +178,9 @@ class ReportController  extends Controller
     }
 
 
+
+
+//admin
     public function showReports($user_id)
     {
         $user = User::find($user_id);
@@ -181,7 +207,7 @@ class ReportController  extends Controller
         return $this->apiResponse($userReports, 'OK', 200);
     }
 
-
+//user/show report for user
     public function specificProjectReport($project_id, $report_id)
     {
         $user = auth()->user();

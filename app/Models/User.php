@@ -16,7 +16,7 @@ class User extends Authenticatable
 
     protected $table = "users";
 
-    protected $fillable = ['first_name','last_name','user_type','email','otp','password','phone','location','iD_card','personal_photo','property_deed','clean_record'];
+    protected $fillable = ['first_name','last_name','user_type','email','otp','device_token','password','phone','location','iD_card','personal_photo','property_deed','clean_record'];
 
     protected $primaryKey = "id";
     public $timestamps = true ;
@@ -37,10 +37,17 @@ class User extends Authenticatable
     public function transactions(){
         return $this->hasMany(Transaction::class,'user_id');
     }
+
     public function evaluations()
     {
         return $this->morphMany(Evaluation::class, 'evaluable');
     }
+
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable');
+    }
+
     public function projects(){
         return $this->hasMany(Project::class,'user_id');
     }

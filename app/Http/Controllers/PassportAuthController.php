@@ -32,28 +32,7 @@ class PassportAuthController extends Controller
 
 
     //Admin_auth
-//    public function adminLogin(Request $request)
-//    {
-//        $validator = Validator::make($request->all(), [
-//            'email' => 'required|email',
-//            'password' => 'required',
-//        ]);
-//        if($validator->fails()){
-//            $errors = $validator->errors()->all();
-//            return $this->apiResponse($errors, 'Validation Error', 422);
-//            // return response()->json(['error' => $validator->errors()->all()]);
-//        }
-//        if(auth()->guard('admin')->attempt(['email' => request('email'), 'password' => request('password')])){
-//            config(['auth.guards.api.provider' => 'admin']);
-//            $admin = Admin::select('admins.*')->find(auth()->guard('admin')->user()->id);
-//            $success =  $admin;
-//            $success['token'] =  $admin->createToken('MyApp',['admin'])->accessToken;
-//
-//            return $this->apiResponse($success, 'success', 200);
-//        }else{
-//            return $this->apiResponse(null, ['error' => ['Email and Password are Wrong.']], 200);
-//        }
-//    }
+
     public function adminLogin(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -91,6 +70,9 @@ class PassportAuthController extends Controller
             return $this->apiResponse(null, ['error' => ['Email and Password are Wrong.']], 200);
         }
     }
+
+
+    
     public function updateAdminBankAccountNumber(Request $request)
     {
         $admin = Auth::user();
@@ -135,6 +117,7 @@ class PassportAuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
             'phone' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
+            'device_token'=> ['required', 'string'],
         ]);
 
         if ($validator->fails()) {
@@ -149,6 +132,7 @@ class PassportAuthController extends Controller
             'user_type' => 'user',
             'email' => $request->email,
             'otp' => null,
+            'device_token'=>$request->device_token,
             'password' => $request->password,
             'phone' => $request->phone,
             'location' => $request->location,
@@ -172,8 +156,11 @@ class PassportAuthController extends Controller
             // $data["access_token"] = $tokenResult->accessToken;
             $data["OTP"]=$this->requestOtp($request,'User');
 
-
-            // $user->notify(new EmailVerificationNotification());
+            // Send notification
+            $title = 'مرحبًا بك في تطبيق Bloom';
+            $body = 'شكرًا لتسجيلك في تطبيق Bloom. نرجو منك التحقق من بريدك الإلكتروني لإتمام عملية التفعيل. نحن سعيدون بانضمامك إلينا!';
+            $this->sendNotificationAndStore($user->id, 'user', $title, $body);
+            
 
             return response()->json($data, Response::HTTP_OK);
         }
@@ -190,6 +177,7 @@ class PassportAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
+            'device_token'=>['required', 'string'],
         ]);
         if($validator->fails()){
             return response()->json(['error' => $validator->errors()->all()]);
@@ -201,11 +189,21 @@ class PassportAuthController extends Controller
 
             if ($user->verified) {
                 config(['auth.guards.api.provider' => 'user']);
-
                 $user = User::select('users.*')->find(auth()->guard('user')->user()->id);
+
+                // // تحديث device_token
+                $investor->device_token = $request->device_token;
+                $investor->save(); // تخزين النتائج في قاعدة البيانات
+     
                 $success =  $user;
                 $success["user_type"] = 'user ';
                 $success['token'] =  $user->createToken('MyApp',['user'])->accessToken;
+
+              
+                 // Send notification
+                $title = 'مرحبًا بك في تطبيق Bloom';
+                $body = "مرحبًا، {$user->first_name}! يسعدنا أن نرحب بك مرة أخرى في تطبيق Bloom. نحن سعداء بانضمامك إلينا. إذا كان لديك أي استفسارات أو تحتاج إلى مساعدة، فلا تتردد في التواصل مع فريق الدعم الخاص بنا. شكرًا لانضمامك إلينا!";
+                $this->sendNotificationAndStore($user->id, 'user', $title, $body);
 
                 return response()->json($success, 200);
             } else {
@@ -254,6 +252,8 @@ class PassportAuthController extends Controller
             'password' => ['required', 'string', 'min:8'],
             'phone' => ['required', 'string', 'max:255'],
             'location' => ['required', 'string', 'max:255'],
+            'device_token'=> ['required', 'string'],
+
         ]);
 
         if ($validator->fails()) {
@@ -267,6 +267,7 @@ class PassportAuthController extends Controller
             'last_name' => $request->last_name,
             'user_type' => 'investor',
             'email' => $request->email,
+            'device_token'=>$request->device_token,
             'password' => $request->password,
             'phone' => $request->phone,
             'location' => $request->location,
@@ -288,6 +289,17 @@ class PassportAuthController extends Controller
             // $data["access_token"] = $tokenResult->accessToken;
             $data["OTP"]=$this->requestOtp($request,'Investor');
 
+
+
+              // Send notification
+              $title = 'مرحبًا بك في تطبيق Bloom';
+              $body = 'شكرًا لتسجيلك في تطبيق Bloom. نرجو منك التحقق من بريدك الإلكتروني لإتمام عملية التفعيل. نحن سعيدون بانضمامك إلينا!';
+              $this->sendNotificationAndStore($user->id, 'user', $title, $body);
+
+            if ($notificationResponse->getStatusCode() !== 200) {
+                return response()->json(['message' => 'Failed to send notification. Registration aborted.'], 500);
+            }
+
             return response()->json($data, Response::HTTP_OK);
         }
 
@@ -303,6 +315,8 @@ class PassportAuthController extends Controller
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
+            'device_token'=>['required', 'string'],
+
         ]);
 
         if($validator->fails()){
@@ -315,9 +329,20 @@ class PassportAuthController extends Controller
             if ($investor->verified) {
                 config(['auth.guards.api.provider' => 'investor']);
                 $investor = Investor::select('investors.*')->find(auth()->guard('investor')->user()->id);
+
+                 // // تحديث device_token
+                $investor->device_token = $request->device_token;
+                $investor->save(); // تخزين النتائج في قاعدة البيانات
+
                 $success =  $investor;
                 $success["user_type"] = 'investor ';
                 $success['token'] =  $investor->createToken('MyApp',['investor'])->accessToken;
+
+              
+               // Send notification
+               $title = 'مرحبًا بك في تطبيق Bloom';
+               $body = "مرحبًا، {$investor->first_name}! يسعدنا أن نرحب بك مرة أخرى في تطبيق Bloom. نحن سعداء بانضمامك إلينا. إذا كان لديك أي استفسارات أو تحتاج إلى مساعدة، فلا تتردد في التواصل مع فريق الدعم الخاص بنا. شكرًا لانضمامك إلينا!";
+               $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
 
                 return response()->json($success, 200);
             } else {
@@ -328,28 +353,8 @@ class PassportAuthController extends Controller
             return response()->json(['error' => ['Email and Password are wrong.']], 401);
         }
     }
-            // $investor = Investor::where('email', $request->email)->first();
-
-        // if ($investor) {
-        //     if ($investor->otp !== null) { // تحقق من وجود قيمة فعلية في حقل "otp"
-        //         if (auth()->guard('investor')->attempt(['email' => request('email'), 'password' => request('password')])) {
-        //             config(['auth.guards.api.provider' => 'investor']);
-
-        //             $investor = Investor::select('investors.*')->find(auth()->guard('investor')->user()->id);
-        //             $success = $investor;
-        //             $success["user_type"] = 'investor ';
-        //             $success['token'] = $investor->createToken('MyApp', ['investor'])->accessToken;
-
-        //             return response()->json($success, 200);
-        //         } else {
-        //             return response()->json(['error' => ['Email and Password are Wrong.']], 401);
-        //         }
-        //     } else {
-        //         return response()->json(['error' => ['Account not verified.']], 401);
-        //     }
-        // } else {
-        //     return response()->json(['error' => ['investor not found.']], 404);
-        // }
+            
+       
 
 
 

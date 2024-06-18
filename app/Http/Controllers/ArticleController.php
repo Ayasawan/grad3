@@ -32,7 +32,6 @@ class ArticleController extends Controller
         ]);
 
         $file_name=$this->saveImage($request->image,'images/article');
-
         //   $file_name=$this->uploadImage($request->image);
 
 
