@@ -203,22 +203,32 @@ class TransactionController  extends Controller
         return $this->apiResponse(TransactionResource::collection($approvedTransactions), 'Approved transactions retrieved successfully', 200);
     }
 
-
-
-
-    //user
-    //all_projects_with_all_transactions
-    public function index_user()
+    public function index_user($projectId)
     {
         $user = Auth::user();
 
-        // استرداد مشاريع المستخدم
-        $projects = $user->projects()->pluck('id');
+        // استرداد مشروع محدد
+        $project = $user->projects()->where('id', $projectId)->first();
 
-        // استرداد المعاملات المرتبطة بمشاريع المستخدم ذات الحالة "قيد المعالجة" أو "موافق عليها"
-        $transactions = Transaction::whereIn('project_id', $projects)
+        if (!$project) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'لم يتم العثور على المشروع.',
+            ], 404);
+        }
+
+        // استرداد المعاملات المرتبطة بالمشروع المحدد ذات الحالة "قيد المعالجة" أو "موافق عليها"
+        $transactions = Transaction::where('project_id', $project->id)
             ->whereIn('status', ['pending', 'approved'])
             ->get();
+
+        if ($transactions->isEmpty()) {
+            return response()->json([
+                'status' => 'success',
+                'message' => 'لا توجد معاملات قيد المعالجة او موافق عليها لهذا المشروع.',
+                'data' => [],
+            ], 200);
+        }
 
         $data = [];
         foreach ($transactions as $transaction) {
@@ -230,7 +240,5 @@ class TransactionController  extends Controller
             'data' => $data,
         ], 200);
     }
-
-
 }
 

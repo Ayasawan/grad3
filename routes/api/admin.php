@@ -82,11 +82,9 @@ Route::group(['middleware' => ['auth:investor-api,admin-api']], function () {
 });
 
 
-
-
 Route::group(['middleware' => ['auth:investor-api,user-api']], function () {
 
-    
+
     Route::get('/{project_id}/specificProjectReport/{report_id}', [ReportController::class, 'specificProjectReport']);
 
     //Investor

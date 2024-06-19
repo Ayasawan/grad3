@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\InterestController;
 use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\PassportAuthController;
 use App\Http\Controllers\CommunicationController;
@@ -29,6 +30,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 
 
+
 Route::post('investor/register', [PassportAuthController::class, 'registerInvestor'])->name('registerInvestor');
 Route::post('investor/login', [PassportAuthController::class, 'LoginInvestor'])->name('LoginInvestor');
 Route::post('verify_otpInv',[\App\Http\Controllers\PassportAuthController::class,'verifyOtpInv']);
@@ -40,8 +42,8 @@ Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scope
     Route::get('logout',[PassportAuthController::class,'LogoutInvestor'])->name('LogoutInvestor');
 
     Route::get('/{project_id}/reports', [ReportController::class, 'showReportsFor_investor']);
-    Route::post('/interests', [InvestorController::class, 'addInterests']);
-    Route::get('/projects/investor-interests', [InvestorController::class, 'getProjectsByInvestorInterests']);
+    Route::post('/interests', [InterestController::class, 'addInterests']);
+    Route::get('/projects/investor-interests', [InterestController::class, 'getProjectsByInvestorInterests']);
 
 
 //Complaint

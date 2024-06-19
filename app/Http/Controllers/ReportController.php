@@ -51,11 +51,12 @@ class ReportController  extends Controller
 
 
     //for_user
+
     public function store(Request $request, $projectId)
     {
         $input = $request->all();
         $validator = Validator::make($input, [
-          
+
         ]);
 
         if ($validator->fails()) {

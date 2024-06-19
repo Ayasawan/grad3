@@ -57,7 +57,7 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
     Route::prefix('Transaction')->group(function () {
         // طلب معاملة جديدة
         Route::post('{id}/request', [\App\Http\Controllers\ReceiptController::class, 'requestTransaction']);
-        Route::get('/index', [\App\Http\Controllers\TransactionController::class, 'index_user']);
+        Route::get('/{projectId}', [\App\Http\Controllers\TransactionController::class, 'index_user']);
 
 //        Route::get('/user-transactions', [\App\Http\Controllers\TransactionController::class,'userTransactions']);
     });
