@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Complaint;
+use App\Models\Project;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ComplaintResource;
 use App\Traits\ApiResponseTrait;
@@ -120,4 +121,21 @@ class ComplaintController extends Controller
     $complaint->delete();
     return $this->apiResponse(null, 'This complaint deleted', 200);
 }
+
+
+
+public function getInvestorComplaints($projectId)
+{
+    $investorId = Auth::id();
+
+    $project = Project::findOrFail($projectId);
+
+    $complaints = $project->complaints()->where('investor_id', $investorId)->get();
+
+    return $this->apiResponse(ComplaintResource::collection($complaints), 'ok', 200);
+}
+
+
+
+
 }

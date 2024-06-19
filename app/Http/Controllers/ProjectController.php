@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Traits\ApiResponseTrait;
@@ -215,6 +216,35 @@ class ProjectController extends Controller
     
         return response()->json(['message' => 'لم يتم العثور على المستخدم المرتبط بالمشروع.'], 404);
     }
+
+
+
+        
+    public function downloadFeasibility_study($id)
+{
+    $project = Project::find($id);
+
+    if (!$project) {
+        return response()->json(['message' => 'لم يتم العثور على المشروع.'], 404);
+    }
+
+    $filePath = public_path("feasibility_study/Project/{$project->feasibility_study}");
+
+    if (file_exists($filePath)) {
+    
+        // تحديد نوع المحتوى المناسب بناءً على نوع الملف
+        $headers = [
+            'Content-Type' => $project->mime_type ?: 'application/octet-stream',
+            'Content-Disposition' => 'attachment; filename="' . $project->feasibility_study . '"',
+        ];
+
+        return response()->download($filePath, $project->feasibility_study, $headers);
+    } else {
+        return response()->json(['message' => 'لم يتم العثور على ملف دراسة الجدوى.'], 404);
+    }
+}
+
+
 
 }
 

@@ -50,6 +50,7 @@ Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scope
         Route::post('/',[\App\Http\Controllers\ComplaintController::class,'store']);
         Route::post('update/{id}',[\App\Http\Controllers\ComplaintController::class,'update']);
         Route::post('delete/{id}',[\App\Http\Controllers\ComplaintController::class,'destroyInvestor']);
+        Route::get('getInvestorComplaints/{id}',[\App\Http\Controllers\ComplaintController::class,'getInvestorComplaints']);
     });
 
 

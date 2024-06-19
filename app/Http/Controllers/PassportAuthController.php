@@ -192,8 +192,8 @@ class PassportAuthController extends Controller
                 $user = User::select('users.*')->find(auth()->guard('user')->user()->id);
 
                 // // تحديث device_token
-                $investor->device_token = $request->device_token;
-                $investor->save(); // تخزين النتائج في قاعدة البيانات
+                $user->device_token = $request->device_token;
+                $user->save(); // تخزين النتائج في قاعدة البيانات
      
                 $success =  $user;
                 $success["user_type"] = 'user ';
