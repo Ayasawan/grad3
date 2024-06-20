@@ -15,7 +15,6 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::get('downloadFeasibility_study/{id}', [\App\Http\Controllers\ProjectController::class, 'downloadFeasibility_study']);
 
 Route::post('/save-token', [App\Http\Controllers\NotificationController::class, 'saveToken'])->name('save-token');
 Route::post('/send-notification', [App\Http\Controllers\NotificationController::class, 'sendPushNotification'])->name('send.notification');

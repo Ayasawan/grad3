@@ -54,22 +54,32 @@ class NotificationController extends Controller
         return response()->json(['message' => 'Failed to fetch user notification'], 500);
     }
 }
+    
+
+//work_in_trait
+        public function sendNotificationToAll($title, $body)
+        {
+            // الحصول على جميع المستخدمين والمستثمرين
+            $users = User::all();
+            $investors = Investor::all();
+
+            // إرسال الإشعار لكل المستخدمين
+            foreach ($users as $user) {
+                $userBody = "عزيزي/عزيزتي {$user->first_name}، {$body}";
+                $this->sendNotificationAndStore($user->id, 'user', $title, $userBody);
+            }
+
+            // إرسال الإشعار لكل المستثمرين
+            foreach ($investors as $investor) {
+                $investorBody = "عزيزي/عزيزتي {$investor->first_name}، {$body}";
+                $this->sendNotificationAndStore($investor->id, 'investor', $title, $investorBody);
+            }
+
+            return response()->json(['message' => 'تم إرسال الإشعارات بنجاح إلى جميع المستخدمين والمستثمرين.']);
+        }
 
 
-public function sendNotificationToAllUsers()
-{
-    $users = User::all();
-
-    foreach ($users as $user) {
-        $title = 'عنوان الإشعار';
-        $body = "عزيزي/عزيزتي {$user->first_name}، نص الإشعار الخاص بك هنا...";
-        $this->sendNotificationAndStore($user->id, 'user', $title, $body);
-    }
-
-    return response()->json(['message' => 'تم إرسال الإشعارات بنجاح إلى جميع المستخدمين.']);
-}
-
-
+//work_in_trait
     public function sendPushNotification($title, $body,$token)
     {
         $SERVER_API_KEY = 'AAAAbhqSv94:APA91bGW09iiW-lKztGKaIvQ2_MLkMir7U6GIoKgUgDNj9sxFvrsW2zMqMQ50y0lDYGRCU_QdhOKhw2rR2408pueH8RI5sW3cPIBQR_Y-m44RW3uSI46qVX9i6qQm_tzHccnxGic7jPa';
@@ -158,7 +168,7 @@ public function sendNotificationToAllUsers()
         }
     }
 
-
+//work_in_trait
     public function sendNotificationAndStore($id, string $user_type, string $title, string $body)
     {
         try {

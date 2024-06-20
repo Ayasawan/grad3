@@ -118,82 +118,27 @@ public function sendNotificationAndStore($id, string $user_type, string $title, 
 }
 
 
-// public function storeNotification(Request $request)
-// {
-   
-//     $user_type = $request->notifiable_type;
 
-//     if ($user_type === "investor") {
-//         $investor = Investor::findOrFail($request->notifiable_id);
-//         $investor->notifications()->create([
-//             'notifiable_id' => $request->notifiable_id,
-//             'notifiable_type' => "investor",
-//             'title' => $request->title,
-//             'body' => $request->body,
-//         ]);
-//     } elseif ($user_type === "user") {
-//         $user = User::findOrFail($request->notifiable_id);
-//         $user->notifications()->create([
-//             'notifiable_id' => $request->notifiable_id,
-//             'notifiable_type' => "user",
-//             'title' => $request->title,
-//             'body' => $request->body,
-//         ]);
-//     }
+    public function sendNotificationToAll($title, $body)
+    {
+        $users = User::all();
+        $investors = Investor::all();
 
-//     return response()->json(null, 204);
-// }
-    
+        // إرسال الإشعار لكل المستخدمين
+        foreach ($users as $user) {
+            $userBody = "عزيزي/عزيزتي {$user->first_name}، {$body}";
+            $this->sendNotificationAndStore($user->id, 'user', $title, $userBody);
+        }
 
- 
+        // إرسال الإشعار لكل المستثمرين
+        foreach ($investors as $investor) {
+            $investorBody = "عزيزي/عزيزتي {$investor->first_name}، {$body}";
+            $this->sendNotificationAndStore($investor->id, 'investor', $title, $investorBody);
+        }
 
-// public function saveToken(Request $request)
-// {
-//     $user = auth()->user();
-//     $user_id = $user->id;
-//     $user1 =User::find($user_id);
-    
-//     $user1->update(['device_token'=>$request->token]);
-//     return response()->json(['token saved successfully.']);
-// }
+        return response()->json(['message' => 'تم إرسال الإشعارات بنجاح إلى جميع المستخدمين والمستثمرين.']);
+    }
 
-
-// public function sendPushNotification($title, $body,$token)
-// {
-//     $firebaseToken = User::whereNotNull('device_token')->pluck('device_token')->all();
-
-//     $SERVER_API_KEY = 'AM_C-e--QDjrLzchGFByvSx8DVvC2dQXftV_7nYLeifDW1b4Ng8fvWfI3DRhHjIK-9QNRFbo8Sr6ILLxGorziYOUCnr4X_mRV238DBZ_vlaSErnFDCJPPnola';
-
-//     $data = [
-//         "registration_ids" => $firebaseToken,
-//         "notification" => [
-//             "title" => $title,
-//             "body" => $body,
-//             "content_available" => true,
-//             "priority" => "high",
-//             "sound" => "default"
-//         ]
-//     ];
-
-//     $dataString = json_encode($data);
-
-//     $headers = [
-//         'Authorization: key=' . $SERVER_API_KEY,
-//         'Content-Type: application/json',
-//     ];
-
-//     $ch = curl_init();
-//     curl_setopt($ch, CURLOPT_URL, 'https://fcm.googleapis.com/fcm/send');
-//     curl_setopt($ch, CURLOPT_POST, true);
-//     curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-//     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-//     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-//     curl_setopt($ch, CURLOPT_POSTFIELDS, $dataString);
-//     $response = curl_exec($ch);
-//     curl_close($ch);
-
-//     return response()->json(['success' => true, 'response' => $response]);
-// }
 
 
 

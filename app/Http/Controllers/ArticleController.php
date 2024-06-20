@@ -47,6 +47,15 @@ class ArticleController extends Controller
 
         ]);
         if($article) {
+
+            //notification
+            $title = 'مقالة جديدة';
+            $body = " نود إعلامك بأنه تم نشر مقالة جديدة قد تهمك. يمكنك تفقدها في قسم المقالات.";
+
+            // استدعاء التابع لإرسال الإشعار لجميع المستخدمين والمستثمرين
+            $this->sendNotificationToAll($title, $body);
+
+               
             return $this->apiResponse(new ArticleResource($article), 'This article save', 201);
         }
         return $this->apiResponse(null, 'This article not save', 400);

@@ -291,14 +291,11 @@ class PassportAuthController extends Controller
 
 
 
-              // Send notification
-              $title = 'مرحبًا بك في تطبيق Bloom';
-              $body = 'شكرًا لتسجيلك في تطبيق Bloom. نرجو منك التحقق من بريدك الإلكتروني لإتمام عملية التفعيل. نحن سعيدون بانضمامك إلينا!';
-              $this->sendNotificationAndStore($user->id, 'user', $title, $body);
+            // Send notification
+            $title = 'مرحبًا بك في تطبيق Bloom';
+            $body = 'شكرًا لتسجيلك في تطبيق Bloom. نرجو منك التحقق من بريدك الإلكتروني لإتمام عملية التفعيل. نحن سعيدون بانضمامك إلينا!';
+            $this->sendNotificationAndStore($investor->id, 'investor', $title, $body);
 
-            if ($notificationResponse->getStatusCode() !== 200) {
-                return response()->json(['message' => 'Failed to send notification. Registration aborted.'], 500);
-            }
 
             return response()->json($data, Response::HTTP_OK);
         }
