@@ -58,8 +58,8 @@ class UserController extends Controller
 
         $responseData = [
             'user' => $user,
-            'invested_projects' => $investedProjects,
-            'pending_projects' => $pendingProjects,
+            'invested_projects' => $investedProjects->values(), 
+            'pending_projects' => $pendingProjects->values(),
         ];
 
         return $this->apiResponse($responseData, 'ok', 200);

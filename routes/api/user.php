@@ -66,7 +66,7 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
     Route::prefix("reports")->group(function (){
         Route::get('/show',[\App\Http\Controllers\ReportController::class,'userReports']);
         Route::get('/{project_id}/reports', [ReportController::class, 'showReportsFor_user']);
-        Route::post('/{}',[\App\Http\Controllers\ReportController::class,'store']);
+        Route::post('/{project_id}',[\App\Http\Controllers\ReportController::class,'store']);
         Route::post('update/{id}',[\App\Http\Controllers\ReportController::class,'update']);
         Route::post('delete/{id}', [\App\Http\Controllers\ReportController::class, 'destroy']);
 

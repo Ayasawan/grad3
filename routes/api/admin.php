@@ -25,6 +25,9 @@ Route::post('/send-notification', [App\Http\Controllers\NotificationController::
 
 Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], function () {
 
+//statistics
+    Route::get('/monthly-statistics',[\App\Http\Controllers\StatisticController::class,'getMonthlyStatistics1']);
+    Route::get('/project-statistics', [\App\Http\Controllers\StatisticController::class, 'getMonthlyProjectStatistics']);
 
 
     Route::prefix("Article")->group(function (){
@@ -173,6 +176,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     Route::prefix("reports")->group(function (){
         Route::get('/', [ReportController::class, 'index']);
         Route::get('/{id}',[\App\Http\Controllers\ReportController::class,'show']);
+        Route::get('/{project_id}/{report_id}', [ReportController::class, 'specificProjectReportforAdmin']);
 
 
     });

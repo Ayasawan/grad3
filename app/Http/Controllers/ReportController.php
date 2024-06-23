@@ -154,7 +154,6 @@ class ReportController  extends Controller
     public function showReportsFor_user(Request $request, $project_id)
     {
         $user = auth()->user();
-
         if (!$user) {
             return $this->apiResponse(null, 'User not authenticated', 401);
         }
@@ -210,8 +209,8 @@ class ReportController  extends Controller
 //user/show report for user
     public function specificProjectReport($project_id, $report_id)
     {
-        $user = auth()->user();
 
+        
         if (!$user) {
             return $this->apiResponse(null, 'User not authenticated', 401);
         }
@@ -236,6 +235,23 @@ class ReportController  extends Controller
         return $this->apiResponse(new ReportResource($report), 'OK', 200);
     }
 
+//admin
+    public function specificProjectReportforAdmin($project_id, $report_id)
+    {
+        $project = Project::find($project_id);
+
+        if (!$project) {
+            return response()->json(['error' => 'Project not found'], 404);
+        }
+
+        $report = $project->reports()->find($report_id);
+
+        if (!$report) {
+            return response()->json(['error' => 'Report not found for the project'], 404);
+        }
+
+        return response()->json(['data' => new ReportResource($report)], 200);
+    }
 
 
 }
