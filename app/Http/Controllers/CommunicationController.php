@@ -87,7 +87,7 @@ class CommunicationController extends Controller
     //for_admin
     public function show($id)
     {
-        $communication = Communication::with('project', 'investor')->find($id);
+        $communication = Communication::with(['project.user', 'investor'])->find($id);
     
         if (!$communication) {
             return response()->json(['message' => 'لم يتم العثور على طلب التواصل.'], 404);
@@ -95,6 +95,7 @@ class CommunicationController extends Controller
     
         return response()->json(['communication' => $communication]);
     }
+    
 
 
     //for_admin

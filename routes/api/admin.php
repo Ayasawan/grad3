@@ -30,6 +30,13 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     Route::get('/project-statistics', [\App\Http\Controllers\StatisticController::class, 'getMonthlyProjectStatistics']);
 
 
+     //Canvas
+     Route::prefix("canvas")->group(function (){
+        Route::get('/{project_id}/show/{id}', [\App\Http\Controllers\CanvasController::class, 'show']);
+
+    });
+
+
     Route::prefix("Article")->group(function (){
         Route::get('/',[\App\Http\Controllers\ArticleController::class,'index']);
         Route::get('/{id}',[\App\Http\Controllers\ArticleController::class,'show']);
@@ -225,4 +232,3 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     });
 
 });
-

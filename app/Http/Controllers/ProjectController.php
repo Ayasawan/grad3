@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use App\Models\User;
+use App\Models\Canvas;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -42,7 +43,6 @@ class ProjectController extends Controller
         $validator = Validator::make($input, [
             'name' => 'required',
             'description' => 'required',
-            'feasibility_study' => 'required',
             'amount' => 'required',
             'location' => 'required',
             'type_id' => 'required',
@@ -65,16 +65,11 @@ class ProjectController extends Controller
             return $this->apiResponse(null, $validator->errors(), 400);
         }
 
-        if ($request->hasFile('feasibility_study')) {
-            $file = $request->file('feasibility_study');
-            $fileName = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('feasibility_study/Project'), $fileName);
-        }
+    
 
         $projectData = [
             'name' => $request->name,
             'description' => $request->description,
-            'feasibility_study' => $fileName,
             'amount' => $request->amount,
             'location' => $request->location,
             'investment_status' => false,
@@ -123,16 +118,21 @@ class ProjectController extends Controller
    
 
     //for_user
-    public function show( $id)
+
+ 
+
+    public function show($id)
     {
-        $Project= Project::find($id);
+        $Project = Project::with('canvases')->find($id);
         if($Project){
             return $this->apiResponse(new ProjectResource($Project) , 'ok' ,200);
         }
-        return $this->apiResponse(null ,'the Project not found' ,404);
+        return $this->apiResponse(null, 'the Project not found', 404);
     }
 
 
+   
+    
 
 
 

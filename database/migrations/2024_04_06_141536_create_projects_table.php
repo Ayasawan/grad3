@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description');
-            $table->text('feasibility_study');
             $table->integer('amount');
             $table->text('location');
             $table->boolean('investment_status')->default(false);

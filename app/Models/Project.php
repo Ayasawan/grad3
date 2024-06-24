@@ -12,7 +12,7 @@ class Project extends Model
 
     protected $table = "projects";
 
-    protected $fillable = ['name','description','feasibility_study','amount','location','investor_id','user_id','type_id',];
+    protected $fillable = ['name','description','amount','location','investor_id','user_id','type_id',];
 
     protected $primaryKey = "id";
     public $timestamps = true ;
@@ -28,11 +28,6 @@ class Project extends Model
 
     public function type(){
         return $this->belongsTo(Type::class,'type_id');
-    }
-
-
-    public function trackings(){
-        return $this->hasOne( Tracking::class,'project_id');
     }
 
     public function complaints(){
@@ -57,5 +52,9 @@ class Project extends Model
 
     public function evaluations(){
         return $this->hasMany( Evaluation::class,'project_id');
+    }
+
+    public function canvases(){
+        return $this->hasOne( Canvas::class,'project_id');
     }
 }
