@@ -197,6 +197,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     Route::prefix("Transaction")->group(function (){
         Route::get('/', [TransactionController::class, 'index']);
         Route::get('/review-requests', [\App\Http\Controllers\TransactionController::class,'reviewRequests']);
+        Route::get('/review-requests/{id}', [\App\Http\Controllers\TransactionController::class,'reviewRequest']);
         Route::get('/showAccepted', [\App\Http\Controllers\TransactionController::class,'showAcceptedTransactions']);
         Route::get('/{id}',[\App\Http\Controllers\TransactionController::class,'show']);
         Route::post('{id}/approve', [\App\Http\Controllers\TransactionController::class,'approveTransaction']);

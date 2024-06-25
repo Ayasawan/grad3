@@ -240,5 +240,25 @@ class TransactionController  extends Controller
             'data' => $data,
         ], 200);
     }
+
+
+    //admin
+    public function reviewRequest($id)
+    {
+        $reviewRequest = Transaction::where('status', 'pending')->find($id);
+
+        if (!$reviewRequest) {
+            return $this->apiResponse([], 'Review request not found', 404);
+        }
+
+        $receipt = Receipt::where('transaction_id', $reviewRequest->id)->first();
+
+        $data = [
+            'transaction' => new TransactionResource($reviewRequest),
+            'receipt' => $receipt ? $receipt->image : null,
+        ];
+
+        return $this->apiResponse($data, 'Review request retrieved successfully', 200);
+    }
 }
 
