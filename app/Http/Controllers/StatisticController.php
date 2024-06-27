@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use App\Models\User;
 use App\Models\Investor;
 use App\Models\Project;
+use App\Models\Report;
 use Carbon\Carbon;
 
 
@@ -90,5 +91,65 @@ class StatisticController extends Controller
 
         return $statistics;
     }
+
+
+    ///الارباح
+    public function getMonthlyReportStatistics()
+    {
+        $cacheKey = 'monthly_project_statistics_' . now()->format('Y-m-d-H'); 
+
+        if (Cache::has($cacheKey)) {
+            $statistics = Cache::get($cacheKey);
+        } else {
+            $statistics = $this->calculateReportStatistics();
+            Cache::put($cacheKey, $statistics, now()->addHour(1)); // cache for 1 hour
+        }
+
+        return response()->json($statistics);
+    }
+
+    private function calculateReportStatistics()
+{
+    $monthsToShow = 4; 
+    $statistics = [];
+
+    for ($i = 0; $i < $monthsToShow; $i++) {
+        $currentMonth = now()->subMonths($i);
+        $monthName = $currentMonth->format('Y-m');
+
+        $totalNetProfit = 0;
+        $totalNetProfitEmployer = 0;
+        $totalNetProfitInvestor = 0;
+        $totalRevenue = 0;
+
+        $projects = Project::all();
+
+        foreach ($projects as $project) {
+            $reports = $project->reports()
+                            ->whereYear('created_at', $currentMonth->year)
+                            ->whereMonth('created_at', $currentMonth->month)
+                            ->get();
+
+            foreach ($reports as $report) {
+                $totalNetProfit += $report->net_profit;
+                $totalNetProfitEmployer += $report->net_profit_employer;
+                $totalNetProfitInvestor += $report->net_profit_investor;
+                $totalRevenue += $report->total_revenue;
+            }
+        }
+
+        $statistics[] = [
+            'month' => $monthName,
+            'total_net_profit' => $totalNetProfit,
+            'total_net_profit_employer' => $totalNetProfitEmployer,
+            'total_net_profit_investor' => $totalNetProfitInvestor,
+            'total_revenue' => $totalRevenue,
+        ];
+    }
+
+    return $statistics;
+}
+
+
 }
 

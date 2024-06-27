@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PassportAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -36,3 +37,23 @@ Route::get('/view-clear', function () {
     Artisan::call('view:clear');
     return 'View cache cleared successfully.';
 });
+
+Route::get('/migrate-fresh', function () {
+
+    Artisan::call('migrate:fresh',['--seed' => true,'--force' => true]);
+
+    return "done";
+
+});
+Route::get('/create-client1', function () {
+
+    Artisan::call('passport:client',[
+        '--no-interaction'=>true,
+        '--name'=>'Tenant Password Grant Client'
+            ]);
+    return "done";
+
+});
+
+
+// Route::get('/create-client', [PassportAuthController::class, 'createClient']);

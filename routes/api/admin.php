@@ -15,7 +15,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-
+//Route::get('/create-client', [App\Http\Controllers\PassportAuthController::class, 'createClient']);
 Route::post('/save-token', [App\Http\Controllers\NotificationController::class, 'saveToken'])->name('save-token');
 Route::post('/send-notification', [App\Http\Controllers\NotificationController::class, 'sendPushNotification'])->name('send.notification');
 // Route::post('admin/login',[\App\Http\Controllers\PassportAuthController::class,'adminLogin'])->name('adminLogin');
@@ -28,6 +28,9 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 //statistics
     Route::get('/monthly-statistics',[\App\Http\Controllers\StatisticController::class,'getMonthlyStatistics1']);
     Route::get('/project-statistics', [\App\Http\Controllers\StatisticController::class, 'getMonthlyProjectStatistics']);
+    Route::get('/Report-statistics', [\App\Http\Controllers\StatisticController::class, 'getMonthlyReportStatistics']);
+
+
 
 
      //Canvas
