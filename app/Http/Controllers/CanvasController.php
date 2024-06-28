@@ -122,55 +122,45 @@ class CanvasController extends Controller
 
 
    
-
-    public function show($project_id, $id)
+    public function show($project_id)
     {
-    $Canvas = Canvas::where('project_id', $project_id)
-                    ->where('id', $id)
-                    ->first();
-
-    if ($Canvas) {
-        return $this->apiResponse(new CanvasResource($Canvas), 'ok', 200);
-    }
-
-    return $this->apiResponse(null, 'The Canvas was not found', 404);
+        $canvasList = Canvas::where('project_id', $project_id)->get();
+    
+        if ($canvasList->isNotEmpty()) {
+            return $this->apiResponse(CanvasResource::collection($canvasList), 'ok', 200);
+        }
+    
+        return $this->apiResponse(null, 'No Canvas found for the project', 404);
     }
 
     
 
-    public function update(Request $request, $project_id, $id)
+    public function update(Request $request, $project_id)
     {
-        $Canvas = Canvas::where('project_id', $project_id)
-        ->where('id', $id)
-        ->first();
+    $canvas = Canvas::where('project_id', $project_id)->first();
 
-        if(!$Canvas)
-        {
-            return $this->apiResponse(null ,'the Canvas not found ',404);
-        }
+    if (!$canvas) {
+        return $this->apiResponse(null, 'The Canvas was not found', 404);
+    }
 
-        $Canvas->update($request->all());
-        if($Canvas)
-        {
-            return $this->apiResponse(new CanvasResource($Canvas) , 'the Canvas update',201);
+    $canvas->update($request->all());
 
-        }
+    return $this->apiResponse(new CanvasResource($canvas), 'The Canvas has been updated', 200);
     }
 
 
     
-    public function destroy($project_id , $id)
+    public function destroy($project_id)
     {
-        $Canvas = Canvas::where('project_id', $project_id)
-        ->where('id', $id)
-        ->first();
-
-        if(!$Canvas){
-            return $this->apiResponse(null, 'This Canvas not found', 404);
+        $canvas = Canvas::where('project_id', $project_id)->first();
+    
+        if (!$canvas) {
+            return $this->apiResponse(null, 'The Canvas was not found', 404);
         }
-
-        $Canvas->delete($id);
-            return $this->apiResponse(null, 'This Canvas deleted', 200);
+    
+        $canvas->delete();
+    
+        return $this->apiResponse(null, 'The Canvas has been deleted', 200);
     }
     
 }

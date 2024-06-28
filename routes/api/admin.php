@@ -35,7 +35,7 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
 
      //Canvas
      Route::prefix("canvas")->group(function (){
-        Route::get('/{project_id}/show/{id}', [\App\Http\Controllers\CanvasController::class, 'show']);
+        Route::get('show/{project_id}', [\App\Http\Controllers\CanvasController::class, 'show']);
 
     });
 
