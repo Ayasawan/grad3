@@ -25,6 +25,9 @@ use Illuminate\Support\Facades\Log;
 use App\Mail\SendMail;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Mail;
+use Laravel\Passport\Client;
+use Illuminate\Support\Str;
+
 
 class PassportAuthController extends Controller
 {
@@ -447,4 +450,60 @@ public function requestOtp(Request $request, $modelName)
         }
     }
 
-}
+    // public function createClient()
+    // {
+    //     // إنشاء كائن جديد للعميل
+    //     $client = new Client();
+
+    //     // ربط العميل بمستخدم معين (اختياري)
+    //     $client->user_id = null; // يمكن استبدال null بمعرف المستخدم إذا كان مرتبطاً بمستخدم
+
+    //     // تحديد اسم العميل
+    //     $client->name = 'My Local Client'; // اسم العميل، يمكنك تغييره حسب الحاجة
+
+    //     // تحديد عنوان إعادة التوجيه المحلي
+    //     $client->redirect = 'http://localhost:8000/auth/callback'; // استبدل هذا بالعنوان الفعلي
+
+    //     // إعدادات إضافية
+    //     $client->personal_access_client = false; // لاستخدام هذا العميل في الوصول الشخصي
+    //     $client->password_client = false; // لاستخدام هذا العميل في منح الرمز السري
+    //     $client->revoked = false; // تأكد من أن العميل غير ملغى
+
+    //     // إعداد السر
+    //     $client->secret = Str::random(40);
+
+    //     // حفظ العميل في قاعدة البيانات
+    //     $client->save();
+
+    //     // إرجاع معرّف العميل والسر كاستجابة JSON
+    //     return response()->json([
+    //         'client_id' => $client->id,
+    //         'client_secret' => $client->secret,
+    //     ]);
+    // }
+
+
+//not_used
+    public function createClient()
+    {
+       
+        // تحقق من وجود عميل وصول شخصي
+        $personalAccessClient = Client::where('personal_access_client', true)->first();
+        if (!$personalAccessClient) {
+            // إنشاء عميل وصول شخصي إذا لم يكن موجودًا
+            $personalAccessClient = new Client();
+            $personalAccessClient->user_id = null; // يمكنك تعيين user_id هنا إذا كان لديك
+            $personalAccessClient->name = 'Personal Access Client'; // اسم العميل
+            $personalAccessClient->redirect = 'http://localhost'; // عنوان إعادة التوجيه
+            $personalAccessClient->personal_access_client = true; // عميل وصول شخصي
+            $personalAccessClient->password_client = false; // ليس عميل وصول بكلمة مرور
+            $personalAccessClient->save();
+        }
+
+        return response()->json([
+            'client_id' => $personalAccessClient->id,
+            'client_secret' => 'No secret', // لا توجد كلمة مرور لهذا النوع من العملاء
+        ]);
+    }
+    }
+
