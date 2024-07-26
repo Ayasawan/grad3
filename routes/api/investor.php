@@ -5,6 +5,7 @@ use App\Http\Controllers\InterestController;
 use App\Http\Controllers\InvestorController;
 use App\Http\Controllers\PassportAuthController;
 use App\Http\Controllers\CommunicationController;
+use App\Http\Controllers\ChatController;
 
 use App\Http\Controllers\ReportController;
 use Illuminate\Http\Request;
@@ -74,6 +75,12 @@ Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scope
         Route::post('/{id}', [\App\Http\Controllers\CommunicationController::class, 'store']);
     });
 
+    //messages
+    Route::post('/sendMessageInvestor', [\App\Http\Controllers\ChatController::class, 'sendMessageInvestor']);
+    Route::post('/indexInvestor', [\App\Http\Controllers\ChatController::class, 'indexInvestor']);
+    Route::get('/admins-with-unseen-messages', [\App\Http\Controllers\ChatController::class, 'adminWithUnseenMessages']);
+
+
 
 
 
@@ -82,3 +89,19 @@ Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scope
 
 
 
+
+
+
+Route::get('/2', function () {
+  
+    return "abeer ok";
+});
+
+
+Route::get('/investor1', function () {
+
+    $investor = Investor::all();
+
+    return $investor;
+
+});

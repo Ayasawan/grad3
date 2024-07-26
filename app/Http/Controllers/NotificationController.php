@@ -11,26 +11,28 @@ class NotificationController extends Controller
 {
 
     
-  
-    public function getUserNotifications()
-    {
-        try {
-            $user = Auth::user();
+  public function getUserNotifications()
+  {
+      try {
+          $user = Auth::user();
 
-            if (!$user) {
-                return response()->json(['message' => 'User not authenticated'], 401);
-            }
+          if (!$user) {
+              return response()->json(['message' => 'User not authenticated'], 401);
+          }
+          $notifications =Notification::query()->where('notifiable_id','=',Auth::id())
+                          ->orderBy('created_at', 'desc')
+                          ->get();
 
-            $notifications = $user->notifications()
-                                  ->orderBy('created_at', 'desc')
-                                  ->get();
+          // $notifications = $user->notifications()
+          //                       ->orderBy('created_at', 'desc')
+          //                       ->get();
 
-            return response()->json(['notifications' => $notifications], 200);
-        } catch (\Exception $e) {
-            \Log::error('Error fetching user notifications: ' . $e->getMessage());
-            return response()->json(['message' => 'Failed to fetch user notifications'], 500);
-        }
-    }
+          return response()->json(['notifications' => $notifications], 200);
+      } catch (\Exception $e) {
+          \Log::error('Error fetching user notifications: ' . $e->getMessage());
+          return response()->json(['message' => 'Failed to fetch user notifications'], 500);
+      }
+  }
 
 
     public function ShowUserNotification($id)

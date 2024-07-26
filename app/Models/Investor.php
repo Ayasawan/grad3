@@ -44,4 +44,15 @@ class Investor extends Authenticatable
         return $this->morphMany(Notification::class, 'notifiable');
     }
 
+    
+    public function sentMessages()
+    {
+        return $this->morphMany(Message::class, 'sender');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->morphMany(Message::class, 'receiver');
+    }
+
 }

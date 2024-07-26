@@ -22,6 +22,19 @@ class UserController extends Controller
         return $this->apiResponse($User, 'ok', 200);
     }
 
+        public function indexVerified()
+    {
+        // الحصول على المستخدمين الذين حساباتهم مؤكدة
+        $users = User::where('verified', true)->get();
+        
+        // تحويل البيانات باستخدام UserResource
+        $userResourceCollection = UserResource::collection($users);
+        
+        // إرجاع النتيجة باستخدام دالة apiResponse
+        return $this->apiResponse($userResourceCollection, 'ok', 200);
+    }
+
+
 
 
     public function showForAdminUser($id)

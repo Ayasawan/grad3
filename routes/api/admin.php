@@ -8,7 +8,6 @@ use App\Http\Controllers\NotificationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
@@ -23,7 +22,19 @@ Route::post('/send-notification', [App\Http\Controllers\NotificationController::
 // Route::post('verify_otp', 'API\AuthController@verifyOtp');
 
 
+
+
+
 Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], function () {
+
+//messages
+// Route::get('/Messages/test', [\App\Http\Controllers\ChatController::class, 'testGetMessagesQuery']);
+
+// Route::post('/sendMessage', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
+// Route::post('/sendMessageInvestor', [\App\Http\Controllers\ChatController::class, 'sendMessageInvestor']);
+// Route::post('/sendMessageUser', [\App\Http\Controllers\ChatController::class, 'sendMessageUser']);
+Route::get('/Messages', [\App\Http\Controllers\PusherController::class, 'index']);
+
 
 //statistics
     Route::get('/monthly-statistics',[\App\Http\Controllers\StatisticController::class,'getMonthlyStatistics1']);
@@ -31,11 +42,9 @@ Route::group(['middleware' => ['auth:investor-api,user-api,admin-api']], functio
     Route::get('/Report-statistics', [\App\Http\Controllers\StatisticController::class, 'getMonthlyReportStatistics']);
 
 
-
-
-     //Canvas
-     Route::prefix("canvas")->group(function (){
-        Route::get('/{project_id}/show/{id}', [\App\Http\Controllers\CanvasController::class, 'show']);
+    //Canvas
+    Route::prefix("canvas")->group(function (){
+        Route::get('show/{project_id}', [\App\Http\Controllers\CanvasController::class, 'show']);
 
     });
 
@@ -171,6 +180,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     Route::prefix("investors")->group(function (){
 
         Route::get('/',[\App\Http\Controllers\InvestorController::class,'index']);
+        Route::get('/indexVerified',[\App\Http\Controllers\InvestorController::class,'indexVerified']);
         Route::get('showForAdmin/{id}',[\App\Http\Controllers\InvestorController::class,'showForAdmin']);
         Route::post('delete/{id}',[\App\Http\Controllers\InvestorController::class,'destroyAdmin']);
     });
@@ -227,6 +237,7 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     Route::prefix("users")->group(function () {
 
         Route::get('/', [\App\Http\Controllers\UserController::class, 'indexUser']);
+        Route::get('/indexVerified', [\App\Http\Controllers\UserController::class, 'indexVerified']);
         Route::get('showForAdmin/{id}', [\App\Http\Controllers\UserController::class, 'showForAdminUser']);
         Route::post('delete/{id}', [\App\Http\Controllers\UserController::class, 'destroyAdmin']);
     });
@@ -234,5 +245,11 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     Route::prefix('notification')->group(function () {
         Route::post('/notify-user', [\App\Http\Controllers\NotificationController::class, 'notifyUser']);
     });
+
+     //messages
+    Route::post('/sendMessage', [\App\Http\Controllers\ChatController::class, 'sendMessage']);
+    Route::post('/indexAdmin', [\App\Http\Controllers\ChatController::class, 'index']);
+    Route::get('/users-with-unseen-messages', [\App\Http\Controllers\ChatController::class, 'usersWithUnseenMessages']);
+    Route::get('/investors-with-unseen-messages', [\App\Http\Controllers\ChatController::class, 'investorsWithUnseenMessages']);
 
 });

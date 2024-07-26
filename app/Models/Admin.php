@@ -18,11 +18,21 @@ class Admin extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password' ,'bank_account_number',
+        'name', 'email', 'password' ,'user_type','bank_account_number',
     ];
 
     protected $hidden = [
         'password',
         ];
 
+
+        public function sentMessages()
+        {
+            return $this->morphMany(Message::class, 'sender');
+        }
+    
+        public function receivedMessages()
+        {
+            return $this->morphMany(Message::class, 'receiver');
+        }
 }

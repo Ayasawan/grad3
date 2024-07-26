@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Models\Investor;
 use App\Models\User;
+use App\Models\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -150,6 +151,10 @@ public function store(Request $request, $id)
         $evaluations = $project->evaluations()->count();
         return response()->json(['total_evaluation_count' => $evaluations]);
     }
+
+
+    
+
 }
 
 

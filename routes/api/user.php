@@ -78,9 +78,17 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
     // Canvas
 Route::prefix("canvas")->group(function () {
     Route::post('store/{id}', [\App\Http\Controllers\CanvasController::class, 'store']);
-    Route::post('/{project_id}/update/{id}', [\App\Http\Controllers\CanvasController::class, 'update']);
-    Route::post('/{project_id}/destroy/{id}', [\App\Http\Controllers\CanvasController::class, 'destroy']);
+    Route::post('update/{project_id}', [\App\Http\Controllers\CanvasController::class, 'update']);
+    Route::post('destroy/{project_id}', [\App\Http\Controllers\CanvasController::class, 'destroy']);
 });
+
+
+//messages
+Route::post('/sendMessageUser', [\App\Http\Controllers\ChatController::class, 'sendMessageUser']);
+Route::post('/indexUser', [\App\Http\Controllers\ChatController::class, 'indexUser']);
+Route::get('/admins-with-unseen-messages', [\App\Http\Controllers\ChatController::class, 'adminWithUnseenMessages']);
+
+
 
 
 

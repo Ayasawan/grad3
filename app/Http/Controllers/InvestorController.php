@@ -24,6 +24,18 @@ class InvestorController extends Controller
         return $this->apiResponse($Investor, 'ok', 200);
     }
 
+        public function indexVerified()
+    {
+        // الحصول على المستثمرين الذين حساباتهم مؤكدة
+        $investors = Investor::where('verified', true)->get();
+        
+        // تحويل البيانات باستخدام InvestorResource
+        $investorResourceCollection = InvestorResource::collection($investors);
+        
+        // إرجاع النتيجة باستخدام دالة apiResponse
+        return $this->apiResponse($investorResourceCollection, 'ok', 200);
+    }
+
 
     public function showMyProfile()
     {

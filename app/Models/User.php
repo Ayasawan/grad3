@@ -51,4 +51,14 @@ class User extends Authenticatable
     public function projects(){
         return $this->hasMany(Project::class,'user_id');
     }
+
+    public function sentMessages()
+    {
+        return $this->morphMany(Message::class, 'sender');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->morphMany(Message::class, 'receiver');
+    }
 }

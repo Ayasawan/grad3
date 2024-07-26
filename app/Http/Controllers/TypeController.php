@@ -107,16 +107,14 @@ class TypeController extends Controller
             return $this->apiResponse(null ,'the type was deleted',200);
     }
 
-        public function showProjectsByType(string $typeId)
+    public function showProjectsByType(string $typeId)
     {
-        // Find the requested type
         $type = Type::find($typeId);
-
-        // Check if the type exists
+    
         if ($type) {
-            // Get the projects associated with the specified type
-            $projects = $type->projects;
-
+    
+            $projects = $type->projects()->where('accept_status', 1)->get();
+    
             // Return the projects as a response
             return $this->apiResponse($projects, 'List of projects for this type', 200);
         } else {
