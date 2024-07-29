@@ -42,8 +42,8 @@ Route::get('/Messages', [\App\Http\Controllers\PusherController::class, 'index']
     Route::get('/Report-statistics', [\App\Http\Controllers\StatisticController::class, 'getMonthlyReportStatistics']);
 
 
-    //Canvas
-    Route::prefix("canvas")->group(function (){
+     //Canvas
+     Route::prefix("canvas")->group(function (){
         Route::get('show/{project_id}', [\App\Http\Controllers\CanvasController::class, 'show']);
 
     });

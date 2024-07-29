@@ -75,6 +75,7 @@ Route::group( ['prefix' =>'user','middleware' => ['auth:user-api','scopes:user']
 
 
 
+
     // Canvas
 Route::prefix("canvas")->group(function () {
     Route::post('store/{id}', [\App\Http\Controllers\CanvasController::class, 'store']);
