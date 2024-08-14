@@ -81,6 +81,19 @@ Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scope
     Route::get('/admins-with-unseen-messages', [\App\Http\Controllers\ChatController::class, 'adminWithUnseenMessages']);
 
 
+    //Appointments
+    Route::prefix("Appointment")->group(function (){
+        Route::get('/', [\App\Http\Controllers\AppointmentController::class, 'index']);
+    });
+
+
+
+     //Meeting
+     Route::prefix("Meeting")->group(function (){
+        Route::post('/{id}/{project_id}', [\App\Http\Controllers\MeetingController::class, 'store']);
+    });
+
+
 
 
 

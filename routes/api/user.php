@@ -90,7 +90,11 @@ Route::post('/indexUser', [\App\Http\Controllers\ChatController::class, 'indexUs
 Route::get('/admins-with-unseen-messages', [\App\Http\Controllers\ChatController::class, 'adminWithUnseenMessages']);
 
 
-
+ //Meeting
+ Route::prefix("Meeting")->group(function (){
+    Route::get('/', [\App\Http\Controllers\MeetingController::class, 'indexUser']);
+    Route::get('/{id}',[\App\Http\Controllers\MeetingController::class,'accept']);
+});
 
 
 });

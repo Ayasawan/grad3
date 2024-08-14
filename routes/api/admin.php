@@ -252,4 +252,17 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
     Route::get('/users-with-unseen-messages', [\App\Http\Controllers\ChatController::class, 'usersWithUnseenMessages']);
     Route::get('/investors-with-unseen-messages', [\App\Http\Controllers\ChatController::class, 'investorsWithUnseenMessages']);
 
+
+
+    //Appointments
+    Route::prefix("Appointment")->group(function (){
+        Route::post('/', [\App\Http\Controllers\AppointmentController::class, 'store']);
+    });
+
+
+        //Meeting
+    Route::prefix("Meeting")->group(function (){
+        Route::get('/', [\App\Http\Controllers\MeetingController::class, 'indexAdmin']);
+    });
+
 });
