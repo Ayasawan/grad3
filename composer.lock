@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5804c98374d59cb00bcb8217f2bbc199",
+    "content-hash": "864a8f77326fcd096bf56aaeb3ddfcc9",
     "packages": [
         {
             "name": "brick/math",
@@ -6916,6 +6916,43 @@
                 "source": "https://github.com/webmozarts/assert/tree/1.11.0"
             },
             "time": "2022-06-03T18:03:27+00:00"
+        },
+        {
+            "name": "yasserbelhimer/agora-access-token-generator",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/yasserbelhimer/agora-access-token-generator.git",
+                "reference": "0658a971346320ef4464a789b1fa14dd4cf5bfa3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/yasserbelhimer/agora-access-token-generator/zipball/0658a971346320ef4464a789b1fa14dd4cf5bfa3",
+                "reference": "0658a971346320ef4464a789b1fa14dd4cf5bfa3",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Yasser\\Agora\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "yasserbelhimer",
+                    "email": "yasserbelhimer@gmail.com"
+                }
+            ],
+            "description": "RTC Token generator",
+            "support": {
+                "issues": "https://github.com/yasserbelhimer/agora-access-token-generator/issues",
+                "source": "https://github.com/yasserbelhimer/agora-access-token-generator/tree/1.0.0"
+            },
+            "time": "2022-02-06T22:11:14+00:00"
         }
     ],
     "packages-dev": [

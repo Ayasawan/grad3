@@ -88,6 +88,9 @@ Route::get('/Messages', [\App\Http\Controllers\PusherController::class, 'index']
     Route::prefix("reports")->group(function (){
         Route::get('/{project_id}',[\App\Http\Controllers\ReportController::class,'projectReports']);
     });
+
+
+
 });
 
 
@@ -256,7 +259,10 @@ Route::group( ['prefix' => 'admin','middleware' => ['auth:admin-api','scopes:adm
 
     //Appointments
     Route::prefix("Appointment")->group(function (){
-        Route::post('/', [\App\Http\Controllers\AppointmentController::class, 'store']);
+        Route::get('/', [\App\Http\Controllers\AppointmentController::class, 'indexAdmin']);
+        Route::post('/store', [\App\Http\Controllers\AppointmentController::class, 'store']);
+        Route::post('update/{id}',[\App\Http\Controllers\AppointmentController::class,'update']);
+        Route::post('delete/{id}',[\App\Http\Controllers\AppointmentController::class,'destroy']);
     });
 
 

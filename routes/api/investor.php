@@ -83,7 +83,7 @@ Route::group( ['prefix' =>'investor','middleware' => ['auth:investor-api','scope
 
     //Appointments
     Route::prefix("Appointment")->group(function (){
-        Route::get('/', [\App\Http\Controllers\AppointmentController::class, 'index']);
+        Route::get('/', [\App\Http\Controllers\AppointmentController::class, 'indexInvestor']);
     });
 
 
