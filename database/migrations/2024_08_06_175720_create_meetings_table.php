@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('investor_id')->constrained('investors')->cascadeOnDelete();
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('appointment_id')->constrained('appointments')->cascadeOnDelete();
+            $table->foreignId('project_id')->constrained('projects')->cascadeOnDelete();
             $table->date('meeting_date'); 
             $table->timestamps();
         });

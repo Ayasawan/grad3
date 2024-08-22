@@ -11,7 +11,7 @@ class Meeting extends Model
     protected $table = "meetings";
 
     protected $fillable = [
-        'status_meeting', 'investor_id' , 'user_id' , 'appointment_id' , 'meeting_date'];
+        'status_meeting', 'investor_id' , 'user_id' , 'appointment_id' , 'project_id', 'meeting_date'];
 
     
     protected $primaryKey = "id";
@@ -24,5 +24,9 @@ class Meeting extends Model
 
     public function user(){
         return $this->belongsTo(User::class,'user_id');
+    }
+
+    public function project(){
+        return $this->belongsTo(Project::class,'project_id');
     }
 }

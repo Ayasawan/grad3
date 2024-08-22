@@ -12,6 +12,9 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\MeetingResource;
+use App\Http\Resources\AppointmentResource;
+use App\Http\Resources\ProjectResource;
+
 use App\Traits\ApiResponseTrait;
 
 class MeetingController extends Controller
@@ -21,17 +24,26 @@ class MeetingController extends Controller
 
     public function indexUser()
     {
-        $userId = auth()->user()->id; 
+        $userId = auth()->user()->id;
         $todayDate = now()->toDateString();
-
+    
         $meetings = Meeting::where('user_id', $userId)
                             ->where('status_meeting', 0)
                             ->where('meeting_date', $todayDate)
-                            ->get(); 
-
-        $meeting = MeetingResource::collection($meetings);
-        
-        return $this->apiResponse($meeting, 'ok', 200);
+                            ->get();
+    
+        $detailedMeetings = [];
+        foreach ($meetings as $meeting) {
+            $appointment = Appointment::find($meeting->appointment_id);
+            $project = Project::find($meeting->project_id);
+    
+            $meeting->appointment = $appointment;
+            $meeting->project = $project;
+    
+            $detailedMeetings[] = $meeting;
+        }
+    
+        return $this->apiResponse($detailedMeetings, 'ok', 200);
     }
 
 
@@ -82,6 +94,7 @@ class MeetingController extends Controller
                     'investor_id' => Auth::id(),
                     'status_meeting' => 0,
                     'appointment_id' => $id,
+                    'project_id' => $project_id, 
                     'meeting_date' => now()->toDateString(),
                 ]);
 
